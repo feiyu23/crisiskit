@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { storageService } from '../services/storage';
-import { Incident } from '../types';
+import { Incident, IncidentResponse } from '../types';
 import { Button } from '../components/Button';
-import { AlertTriangle, Plus, ArrowRight, BookOpen } from 'lucide-react';
+import { AlertTriangle, Plus, ArrowRight, BookOpen, Download, Upload } from 'lucide-react';
+import { exportAllDataJSON, importDataJSON } from '../utils/dataPortability';
 
 export const Home: React.FC = () => {
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadIncidents();
@@ -17,6 +21,88 @@ export const Home: React.FC = () => {
     const data = await storageService.getIncidents();
     setIncidents(data);
     setLoading(false);
+  };
+
+  const handleExportAll = async () => {
+    setIsExporting(true);
+    try {
+      // Get all incidents
+      const incidents = await storageService.getIncidents();
+
+      // Get all responses for all incidents
+      const responsesPromises = incidents.map(inc => storageService.getResponses(inc.id));
+      const responsesArrays = await Promise.all(responsesPromises);
+      const allResponses = responsesArrays.flat();
+
+      exportAllDataJSON(incidents, allResponses);
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Failed to export data. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsImporting(true);
+    try {
+      const { incidents: importedIncidents, responses: importedResponses } = await importDataJSON(file);
+
+      // Confirm before overwriting
+      const confirmMsg = `This will import ${importedIncidents.length} incidents and ${importedResponses.length} responses. This will MERGE with existing data. Continue?`;
+      if (!confirm(confirmMsg)) {
+        setIsImporting(false);
+        return;
+      }
+
+      // Import incidents
+      const existingIncidents = await storageService.getIncidents();
+      const existingIds = new Set(existingIncidents.map(i => i.id));
+
+      for (const incident of importedIncidents) {
+        if (!existingIds.has(incident.id)) {
+          // Create new incident by directly setting localStorage
+          localStorage.setItem(
+            'crisiskit_incidents',
+            JSON.stringify([...existingIncidents, incident])
+          );
+          existingIncidents.push(incident);
+        }
+      }
+
+      // Import responses
+      const allExistingResponses: IncidentResponse[] = [];
+      for (const incident of existingIncidents) {
+        const responses = await storageService.getResponses(incident.id);
+        allExistingResponses.push(...responses);
+      }
+
+      const existingResponseIds = new Set(allExistingResponses.map(r => r.id));
+      const newResponses = importedResponses.filter(r => !existingResponseIds.has(r.id));
+
+      if (newResponses.length > 0) {
+        localStorage.setItem(
+          'crisiskit_responses',
+          JSON.stringify([...allExistingResponses, ...newResponses])
+        );
+      }
+
+      alert(`Successfully imported ${importedIncidents.length} incidents and ${newResponses.length} new responses!`);
+      loadIncidents(); // Reload
+    } catch (error) {
+      console.error('Import failed:', error);
+      alert('Failed to import data. Please check the file format.');
+    } finally {
+      setIsImporting(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   return (
@@ -34,15 +120,34 @@ export const Home: React.FC = () => {
         </p>
       </div>
 
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h2 className="text-xl font-bold text-gray-900">Active Incidents</h2>
-        <Link to="/create">
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            New Incident
+        <div className="flex gap-2 flex-wrap">
+          <Button onClick={handleExportAll} variant="secondary" disabled={isExporting || incidents.length === 0}>
+            <Download className="mr-2 h-4 w-4" />
+            {isExporting ? 'Exporting...' : 'Export Backup'}
           </Button>
-        </Link>
+          <Button onClick={handleImportClick} variant="secondary" disabled={isImporting}>
+            <Upload className="mr-2 h-4 w-4" />
+            {isImporting ? 'Importing...' : 'Import Backup'}
+          </Button>
+          <Link to="/create">
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              New Incident
+            </Button>
+          </Link>
+        </div>
       </div>
+
+      {/* Hidden file input for import */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".json"
+        onChange={handleFileSelect}
+        className="hidden"
+      />
 
       {loading ? (
         <div className="space-y-4">
