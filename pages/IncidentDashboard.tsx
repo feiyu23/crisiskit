@@ -8,8 +8,9 @@ import { UrgencyBadge } from '../components/UrgencyBadge';
 import { StatusBadge } from '../components/StatusBadge';
 import { RelativeTime } from '../components/RelativeTime';
 import { exportToCSV } from '../utils/csvExport';
+import { exportToGoogleSheets } from '../utils/googleSheetsExport';
 import { ResponseStatus } from '../types';
-import { ArrowLeft, Share2, RefreshCw, AlertCircle, FileText, ExternalLink, Download } from 'lucide-react';
+import { ArrowLeft, Share2, RefreshCw, AlertCircle, FileText, ExternalLink, Download, Sheet } from 'lucide-react';
 
 export const IncidentDashboard: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -78,6 +79,12 @@ export const IncidentDashboard: React.FC = () => {
   const handleExportCSV = () => {
     if (!incident || responses.length === 0) return;
     exportToCSV(responses, incident.title);
+  };
+
+  const handleExportToSheets = async () => {
+    if (!incident || responses.length === 0) return;
+    const result = await exportToGoogleSheets(incident, responses);
+    alert(result.message);
   };
 
   const updateResponseStatus = async (responseId: string, newStatus: ResponseStatus) => {
@@ -153,9 +160,13 @@ export const IncidentDashboard: React.FC = () => {
              <RefreshCw className={`mr-2 h-4 w-4 ${isAnalyzing ? 'animate-spin' : ''}`} />
              {isAnalyzing ? 'Analyzing...' : 'Run AI Triage'}
           </Button>
+          <Button onClick={handleExportToSheets} variant="secondary" disabled={responses.length === 0}>
+            <Sheet className="mr-2 h-4 w-4" />
+            Open in Sheets
+          </Button>
           <Button onClick={handleExportCSV} variant="secondary" disabled={responses.length === 0}>
             <Download className="mr-2 h-4 w-4" />
-            Export CSV
+            Download CSV
           </Button>
           <Button onClick={copyPublicLink}>
             <Share2 className="mr-2 h-4 w-4" />
