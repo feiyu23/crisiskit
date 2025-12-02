@@ -1,0 +1,7 @@
+{
+  "name": "CrisisKit Lite",
+  "description": "A lightweight, rapid-response crisis form generator with AI-powered urgency classification.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

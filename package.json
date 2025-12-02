@@ -1,0 +1,54 @@
+{
+  "name": "crisiskit-lite",
+  "version": "1.0.0",
+  "description": "A lightweight, rapid-response crisis form generator born from real disaster",
+  "private": false,
+  "license": "MIT",
+  "type": "module",
+  "author": {
+    "name": "Sparksverse",
+    "url": "https://sparksverse.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sparksverse/crisiskit-lite"
+  },
+  "keywords": [
+    "crisis",
+    "emergency",
+    "disaster-response",
+    "google-sheets",
+    "rapid-response",
+    "community-tech",
+    "crisis-management",
+    "humanitarian-tech"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "googleapis": "^144.0.0",
+    "lucide-react": "^0.460.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.6.0",
+    "vite": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
