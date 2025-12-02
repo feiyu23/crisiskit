@@ -4,7 +4,7 @@
 > Share a link. Collect needs. Export to Google Sheets.
 > Born from real disaster. Built for communities.
 
-[Live Demo](https://sos.sparksverse.com) • [Design Philosophy](./pages/DesignNotes.tsx) • [Quick Start](#quick-start) • [Setup Guide](./SETUP.md)
+[Live Demo](https://sos.sparkbeacon.org) • [Design Philosophy](./pages/DesignNotes.tsx) • [Quick Start](#quick-start) • [Setup Guide](./SETUP.md)
 
 ---
 
