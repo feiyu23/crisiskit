@@ -10,9 +10,11 @@ import { RelativeTime } from '../components/RelativeTime';
 import { exportToCSV } from '../utils/csvExport';
 import { exportToGoogleSheets } from '../utils/googleSheetsExport';
 import { ResponseStatus } from '../types';
-import { ArrowLeft, Share2, RefreshCw, AlertCircle, FileText, ExternalLink, Download, Sheet, Settings, BarChart3 } from 'lucide-react';
+import { ArrowLeft, Share2, RefreshCw, AlertCircle, FileText, ExternalLink, Download, Sheet, Settings, BarChart3, Map, List } from 'lucide-react';
 import { GoogleSheetsSetup } from '../components/GoogleSheetsSetup';
 import { StatisticsChart } from '../components/StatisticsChart';
+import { MapView } from '../components/MapView';
+import { ImageGallery } from '../components/ImageGallery';
 
 export const IncidentDashboard: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -24,6 +26,7 @@ export const IncidentDashboard: React.FC = () => {
   const [districtFilter, setDistrictFilter] = useState<string>('');
   const [showSheetsSetup, setShowSheetsSetup] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
+  const [viewMode, setViewMode] = useState<'table' | 'map'>('table');
 
   const loadData = useCallback(async () => {
     if (!id) return;
@@ -161,6 +164,23 @@ export const IncidentDashboard: React.FC = () => {
         </div>
         <div className="flex flex-wrap gap-3">
           <Button
+            onClick={() => setViewMode(viewMode === 'table' ? 'map' : 'table')}
+            variant={viewMode === 'map' ? "primary" : "secondary"}
+            disabled={responses.length === 0}
+          >
+            {viewMode === 'table' ? (
+              <>
+                <Map className="mr-2 h-4 w-4" />
+                Map View
+              </>
+            ) : (
+              <>
+                <List className="mr-2 h-4 w-4" />
+                List View
+              </>
+            )}
+          </Button>
+          <Button
             onClick={() => setShowStatistics(!showStatistics)}
             variant={showStatistics ? "primary" : "secondary"}
             disabled={responses.length === 0}
@@ -247,8 +267,17 @@ export const IncidentDashboard: React.FC = () => {
         </div>
       )}
 
-      <div className="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
-        {filteredResponses.length === 0 ? (
+      {/* Map View */}
+      {viewMode === 'map' && (
+        <div className="mb-6">
+          <MapView responses={filteredResponses} />
+        </div>
+      )}
+
+      {/* Table View */}
+      {viewMode === 'table' && (
+        <div className="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
+          {filteredResponses.length === 0 ? (
           responses.length === 0 ? (
             <div className="p-12 text-center">
               <FileText className="mx-auto h-12 w-12 text-gray-300 mb-4" />
@@ -327,6 +356,11 @@ export const IncidentDashboard: React.FC = () => {
                           {renderLocation(response.location)}
                         </div>
                       </div>
+                      {response.images && response.images.length > 0 && (
+                        <div className="mt-2">
+                          <ImageGallery images={response.images} compact />
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <RelativeTime timestamp={response.submittedAt} />
@@ -358,7 +392,8 @@ export const IncidentDashboard: React.FC = () => {
             </table>
           </div>
         )}
-      </div>
+        </div>
+      )}
 
       {/* Google Sheets Setup Modal */}
       {showSheetsSetup && id && (

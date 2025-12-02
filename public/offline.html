@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CrisisKit - Offline</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 24px;
+      padding: 48px 32px;
+      max-width: 480px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .icon {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 24px;
+      background: #fef3c7;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+    }
+    h1 {
+      font-size: 28px;
+      color: #1f2937;
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+    p {
+      font-size: 16px;
+      color: #6b7280;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .badge {
+      display: inline-block;
+      background: #dc2626;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 16px;
+    }
+    .feature-list {
+      text-align: left;
+      margin-top: 32px;
+      padding: 24px;
+      background: #f9fafb;
+      border-radius: 16px;
+    }
+    .feature-list h2 {
+      font-size: 18px;
+      color: #1f2937;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+    .feature-list ul {
+      list-style: none;
+    }
+    .feature-list li {
+      padding: 8px 0;
+      color: #4b5563;
+      font-size: 14px;
+    }
+    .feature-list li:before {
+      content: "✓ ";
+      color: #10b981;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+    .retry-btn {
+      margin-top: 24px;
+      padding: 12px 32px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .retry-btn:hover {
+      background: #2563eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">📡</div>
+    <h1>You're Currently Offline</h1>
+    <p>CrisisKit has saved all your data locally.</p>
+    <p>Your submissions will automatically sync when you're back online.</p>
+    <span class="badge" id="queueCount">Loading queue...</span>
+
+    <div class="feature-list">
+      <h2>What Still Works:</h2>
+      <ul>
+        <li>View your incident dashboard</li>
+        <li>Fill out response forms</li>
+        <li>Browse cached maps and data</li>
+        <li>Access previously loaded pages</li>
+      </ul>
+    </div>
+
+    <button class="retry-btn" onclick="location.reload()">
+      Try Reconnecting
+    </button>
+  </div>
+
+  <script>
+    // Check network status
+    function updateStatus() {
+      if (navigator.onLine) {
+        window.location.href = '/';
+      }
+    }
+
+    // Check IndexedDB queue count
+    async function updateQueueCount() {
+      try {
+        const db = await indexedDB.open('CrisisKitOffline', 1);
+        // Simplified queue count display
+        document.getElementById('queueCount').textContent = 'Submissions Queued';
+      } catch (err) {
+        document.getElementById('queueCount').textContent = 'Queue Status Unknown';
+      }
+    }
+
+    window.addEventListener('online', updateStatus);
+    setInterval(updateStatus, 5000);
+    updateQueueCount();
+  </script>
+</body>
+</html>

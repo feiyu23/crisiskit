@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { storageService } from '../services/storage';
+import { offlineQueue } from '../services/offlineQueue';
 import { Incident } from '../types';
 import { Button } from '../components/Button';
 import { Input, TextArea } from '../components/Input';
-import { CheckCircle, MapPin, ShieldAlert, X, AlertTriangle } from 'lucide-react';
+import { ImageUpload } from '../components/ImageUpload';
+import { CheckCircle, MapPin, ShieldAlert, X, AlertTriangle, Wifi, WifiOff } from 'lucide-react';
 
 export const PublicSubmit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,13 +21,18 @@ export const PublicSubmit: React.FC = () => {
   const [locationError, setLocationError] = useState('');
   const [showSafetyTips, setShowSafetyTips] = useState(false);
 
+  // Offline State
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [savedOffline, setSavedOffline] = useState(false);
+
   const [formData, setFormData] = useState({
     name: '',
     contact: '',
     region: '',
     district: '',
     location: '',
-    needs: ''
+    needs: '',
+    images: [] as string[]
   });
 
   // Get available districts based on selected region
@@ -42,6 +49,20 @@ export const PublicSubmit: React.FC = () => {
     };
     load();
   }, [id]);
+
+  // Monitor network status
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   const handleSOS = () => {
     setLocationError('');
@@ -84,38 +105,74 @@ export const PublicSubmit: React.FC = () => {
     e.preventDefault();
     if (!id || !formData.name || !formData.needs) return;
 
-    // Check for duplicates (same contact within 1 hour)
-    const existingResponses = await storageService.getResponses(id);
-    const recentDuplicates = existingResponses.filter(r =>
-      r.contact === formData.contact &&
-      (Date.now() - r.submittedAt) < 3600000 // 1 hour = 3600000ms
-    );
+    const submissionData = {
+      incidentId: id,
+      name: formData.name,
+      contact: formData.contact,
+      needs: formData.needs,
+      location: formData.location,
+      ...(formData.region && { region: formData.region }),
+      ...(formData.district && { district: formData.district }),
+      ...(formData.images.length > 0 && { images: formData.images })
+    };
 
-    if (recentDuplicates.length > 0 && !duplicateWarning) {
-      const lastSubmission = new Date(recentDuplicates[0].submittedAt).toLocaleTimeString();
-      setDuplicateWarning(`You submitted a request at ${lastSubmission}. Click submit again to update your information.`);
+    // If offline, save to queue immediately
+    if (!isOnline) {
+      setIsSubmitting(true);
+      try {
+        await offlineQueue.add(submissionData);
+        setSavedOffline(true);
+        setSubmitted(true);
+        setDuplicateWarning(null);
+        window.scrollTo(0, 0);
+        console.log('✅ Saved to offline queue');
+      } catch (error) {
+        console.error('Failed to save offline:', error);
+        alert('Failed to save offline. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
       return;
     }
 
+    // Online: Check for duplicates
+    try {
+      const existingResponses = await storageService.getResponses(id);
+      const recentDuplicates = existingResponses.filter(r =>
+        r.contact === formData.contact &&
+        (Date.now() - r.submittedAt) < 3600000 // 1 hour = 3600000ms
+      );
+
+      if (recentDuplicates.length > 0 && !duplicateWarning) {
+        const lastSubmission = new Date(recentDuplicates[0].submittedAt).toLocaleTimeString();
+        setDuplicateWarning(`You submitted a request at ${lastSubmission}. Click submit again to update your information.`);
+        return;
+      }
+    } catch (error) {
+      console.warn('Could not check duplicates:', error);
+    }
+
+    // Online: Submit directly
     setIsSubmitting(true);
     try {
-      const submissionData = {
-        incidentId: id,
-        name: formData.name,
-        contact: formData.contact,
-        needs: formData.needs,
-        location: formData.location,
-        ...(formData.region && { region: formData.region }),
-        ...(formData.district && { district: formData.district })
-      };
-
       await storageService.submitResponse(submissionData);
       setSubmitted(true);
       setDuplicateWarning(null);
       window.scrollTo(0, 0);
+      console.log('✅ Submitted successfully');
     } catch (error) {
-      console.error(error);
-      alert('Failed to submit. Please try again.');
+      console.error('Submission failed:', error);
+
+      // If online submission fails, save to offline queue as fallback
+      try {
+        await offlineQueue.add(submissionData);
+        setSavedOffline(true);
+        setSubmitted(true);
+        console.log('✅ Saved to offline queue as fallback');
+      } catch (offlineError) {
+        console.error('Failed to save offline:', offlineError);
+        alert('Failed to submit. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -129,13 +186,44 @@ export const PublicSubmit: React.FC = () => {
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
            <div className="bg-white py-8 px-4 shadow rounded-lg sm:px-10 text-center">
-             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-success-100 mb-4">
-               <CheckCircle className="h-6 w-6 text-success-600" />
-             </div>
-             <h2 className="text-2xl font-bold text-gray-900 mb-2">Submission Received</h2>
-             <p className="text-gray-500 mb-6">
-               Your information has been recorded. The response team will review it shortly.
-             </p>
+             {savedOffline ? (
+               <>
+                 <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
+                   <WifiOff className="h-6 w-6 text-blue-600" />
+                 </div>
+                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Saved Offline</h2>
+                 <p className="text-gray-500 mb-6">
+                   Your submission has been saved locally and will be automatically uploaded when you're back online.
+                 </p>
+                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-sm text-left">
+                   <p className="font-semibold text-blue-900 mb-2">What happens next:</p>
+                   <ul className="space-y-2 text-blue-800">
+                     <li className="flex items-start">
+                       <span className="text-blue-600 mr-2">•</span>
+                       Your data is safely stored on this device
+                     </li>
+                     <li className="flex items-start">
+                       <span className="text-blue-600 mr-2">•</span>
+                       It will sync automatically when network is restored
+                     </li>
+                     <li className="flex items-start">
+                       <span className="text-blue-600 mr-2">•</span>
+                       You can close this page - sync will happen in background
+                     </li>
+                   </ul>
+                 </div>
+               </>
+             ) : (
+               <>
+                 <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-success-100 mb-4">
+                   <CheckCircle className="h-6 w-6 text-success-600" />
+                 </div>
+                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Submission Received</h2>
+                 <p className="text-gray-500 mb-6">
+                   Your information has been recorded. The response team will review it shortly.
+                 </p>
+               </>
+             )}
              <Button onClick={() => window.location.reload()} variant="secondary">
                Submit Another Response
              </Button>
@@ -147,6 +235,14 @@ export const PublicSubmit: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+      {/* Network Status Indicator */}
+      {!isOnline && (
+        <div className="fixed top-0 left-0 right-0 bg-orange-600 text-white px-4 py-2 text-center text-sm font-semibold z-50 flex items-center justify-center gap-2">
+          <WifiOff className="w-4 h-4" />
+          Offline Mode - Submissions will be saved locally
+        </div>
+      )}
+
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="text-center text-3xl font-extrabold text-gray-900">{incident.title}</h2>
         <p className="mt-2 text-center text-sm text-gray-600 max-w-sm mx-auto">
@@ -286,6 +382,12 @@ export const PublicSubmit: React.FC = () => {
               rows={4}
               required
               className={formData.needs.includes('SOS') ? 'border-danger-300 bg-danger-50' : ''}
+            />
+
+            <ImageUpload
+              images={formData.images}
+              onChange={(images) => setFormData({...formData, images})}
+              maxImages={5}
             />
 
             <Button type="submit" className="w-full" size="lg" isLoading={isSubmitting}>

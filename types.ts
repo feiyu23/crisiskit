@@ -23,6 +23,7 @@ export interface IncidentResponse {
   location: string;
   region?: string; // Selected region (e.g., "Hong Kong", "Kowloon")
   district?: string; // Selected district (e.g., "Sha Tin", "Mong Kok")
+  images?: string[]; // Base64 encoded images (max 5)
   submittedAt: number;
   status?: ResponseStatus;
   assignedTo?: string;
