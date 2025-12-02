@@ -1,4 +1,5 @@
 export type UrgencyLevel = 'CRITICAL' | 'MODERATE' | 'LOW' | 'UNKNOWN';
+export type ResponseStatus = 'pending' | 'in_progress' | 'resolved' | 'duplicate';
 
 export interface Incident {
   id: string;
@@ -15,6 +16,10 @@ export interface IncidentResponse {
   needs: string;
   location: string;
   submittedAt: number;
+  status?: ResponseStatus;
+  assignedTo?: string;
+  notes?: string;
+  resolvedAt?: number;
   aiClassification?: {
     urgency: UrgencyLevel;
     reasoning: string;

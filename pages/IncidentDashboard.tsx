@@ -5,7 +5,10 @@ import { geminiService } from '../services/gemini';
 import { Incident, IncidentResponse } from '../types';
 import { Button } from '../components/Button';
 import { UrgencyBadge } from '../components/UrgencyBadge';
+import { StatusBadge } from '../components/StatusBadge';
+import { RelativeTime } from '../components/RelativeTime';
 import { exportToCSV } from '../utils/csvExport';
+import { ResponseStatus } from '../types';
 import { ArrowLeft, Share2, RefreshCw, AlertCircle, FileText, ExternalLink, Download } from 'lucide-react';
 
 export const IncidentDashboard: React.FC = () => {
@@ -22,7 +25,22 @@ export const IncidentDashboard: React.FC = () => {
       storageService.getResponses(id)
     ]);
     setIncident(incData || null);
-    setResponses(resData);
+
+    // Sort responses: CRITICAL first, then MODERATE, then LOW, then UNKNOWN
+    const sortedResponses = resData.sort((a, b) => {
+      const urgencyOrder = { CRITICAL: 0, MODERATE: 1, LOW: 2, UNKNOWN: 3 };
+      const aUrgency = a.aiClassification?.urgency || 'UNKNOWN';
+      const bUrgency = b.aiClassification?.urgency || 'UNKNOWN';
+
+      // First sort by urgency
+      const urgencyDiff = urgencyOrder[aUrgency] - urgencyOrder[bUrgency];
+      if (urgencyDiff !== 0) return urgencyDiff;
+
+      // Then by submission time (newest first)
+      return b.submittedAt - a.submittedAt;
+    });
+
+    setResponses(sortedResponses);
     setLoading(false);
   }, [id]);
 
@@ -58,6 +76,20 @@ export const IncidentDashboard: React.FC = () => {
   const handleExportCSV = () => {
     if (!incident || responses.length === 0) return;
     exportToCSV(responses, incident.title);
+  };
+
+  const updateResponseStatus = async (responseId: string, newStatus: ResponseStatus) => {
+    const response = responses.find(r => r.id === responseId);
+    if (!response) return;
+
+    const updated = {
+      ...response,
+      status: newStatus,
+      resolvedAt: newStatus === 'resolved' ? Date.now() : response.resolvedAt
+    };
+
+    await storageService.updateResponse(updated);
+    setResponses(prev => prev.map(r => r.id === responseId ? updated : r));
   };
 
   // Helper to render location with potential links
@@ -129,15 +161,28 @@ export const IncidentDashboard: React.FC = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Urgency (AI)</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Urgency</th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name / Contact</th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Needs & Location</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {responses.map((response) => (
-                  <tr key={response.id} className="hover:bg-gray-50">
+                {responses.map((response) => {
+                  const urgency = response.aiClassification?.urgency || 'UNKNOWN';
+                  const rowClass = urgency === 'CRITICAL'
+                    ? 'bg-red-50 hover:bg-red-100 border-l-4 border-red-500'
+                    : urgency === 'MODERATE'
+                    ? 'bg-yellow-50 hover:bg-yellow-100 border-l-4 border-yellow-500'
+                    : 'hover:bg-gray-50';
+
+                  return (
+                  <tr key={response.id} className={rowClass}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <StatusBadge status={response.status || 'pending'} />
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {response.aiClassification ? (
                         <div className="flex flex-col gap-1">
@@ -162,11 +207,32 @@ export const IncidentDashboard: React.FC = () => {
                         {renderLocation(response.location)}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(response.submittedAt).toLocaleString()}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <RelativeTime timestamp={response.submittedAt} />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex gap-2">
+                        {response.status !== 'in_progress' && response.status !== 'resolved' && (
+                          <button
+                            onClick={() => updateResponseStatus(response.id, 'in_progress')}
+                            className="text-xs px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                          >
+                            Start
+                          </button>
+                        )}
+                        {response.status !== 'resolved' && (
+                          <button
+                            onClick={() => updateResponseStatus(response.id, 'resolved')}
+                            className="text-xs px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                          >
+                            Resolve
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>

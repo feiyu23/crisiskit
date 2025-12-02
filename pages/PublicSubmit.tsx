@@ -12,7 +12,8 @@ export const PublicSubmit: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+  const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null);
+
   // SOS & Location State
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState('');
@@ -76,6 +77,19 @@ export const PublicSubmit: React.FC = () => {
     e.preventDefault();
     if (!id || !formData.name || !formData.needs) return;
 
+    // Check for duplicates (same contact within 1 hour)
+    const existingResponses = await storageService.getResponses(id);
+    const recentDuplicates = existingResponses.filter(r =>
+      r.contact === formData.contact &&
+      (Date.now() - r.submittedAt) < 3600000 // 1 hour = 3600000ms
+    );
+
+    if (recentDuplicates.length > 0 && !duplicateWarning) {
+      const lastSubmission = new Date(recentDuplicates[0].submittedAt).toLocaleTimeString();
+      setDuplicateWarning(`You submitted a request at ${lastSubmission}. Click submit again to update your information.`);
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       await storageService.submitResponse({
@@ -83,6 +97,7 @@ export const PublicSubmit: React.FC = () => {
         ...formData
       });
       setSubmitted(true);
+      setDuplicateWarning(null);
       window.scrollTo(0, 0);
     } catch (error) {
       console.error(error);
@@ -156,6 +171,16 @@ export const PublicSubmit: React.FC = () => {
             <div className="mb-4 p-3 bg-warning-50 text-warning-800 text-sm rounded-lg flex items-start">
                 <AlertTriangle className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
                 {locationError}
+            </div>
+        )}
+
+        {duplicateWarning && (
+            <div className="mb-4 p-4 bg-orange-50 border-2 border-orange-300 text-orange-900 text-sm rounded-lg flex items-start">
+                <AlertTriangle className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0 text-orange-600" />
+                <div>
+                    <p className="font-semibold mb-1">Possible Duplicate Submission</p>
+                    <p>{duplicateWarning}</p>
+                </div>
             </div>
         )}
 
