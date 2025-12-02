@@ -10,8 +10,9 @@ import { RelativeTime } from '../components/RelativeTime';
 import { exportToCSV } from '../utils/csvExport';
 import { exportToGoogleSheets } from '../utils/googleSheetsExport';
 import { ResponseStatus } from '../types';
-import { ArrowLeft, Share2, RefreshCw, AlertCircle, FileText, ExternalLink, Download, Sheet, Settings } from 'lucide-react';
+import { ArrowLeft, Share2, RefreshCw, AlertCircle, FileText, ExternalLink, Download, Sheet, Settings, BarChart3 } from 'lucide-react';
 import { GoogleSheetsSetup } from '../components/GoogleSheetsSetup';
+import { StatisticsChart } from '../components/StatisticsChart';
 
 export const IncidentDashboard: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,6 +23,7 @@ export const IncidentDashboard: React.FC = () => {
   const [regionFilter, setRegionFilter] = useState<string>('');
   const [districtFilter, setDistrictFilter] = useState<string>('');
   const [showSheetsSetup, setShowSheetsSetup] = useState(false);
+  const [showStatistics, setShowStatistics] = useState(false);
 
   const loadData = useCallback(async () => {
     if (!id) return;
@@ -158,6 +160,14 @@ export const IncidentDashboard: React.FC = () => {
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
+          <Button
+            onClick={() => setShowStatistics(!showStatistics)}
+            variant={showStatistics ? "primary" : "secondary"}
+            disabled={responses.length === 0}
+          >
+            <BarChart3 className="mr-2 h-4 w-4" />
+            {showStatistics ? 'Hide Stats' : 'Show Stats'}
+          </Button>
           <Button onClick={runAIAnalysis} variant="secondary" disabled={isAnalyzing || responses.length === 0}>
              <RefreshCw className={`mr-2 h-4 w-4 ${isAnalyzing ? 'animate-spin' : ''}`} />
              {isAnalyzing ? 'Analyzing...' : 'Run AI Triage'}
@@ -180,6 +190,13 @@ export const IncidentDashboard: React.FC = () => {
           </Button>
         </div>
       </div>
+
+      {/* Statistics Dashboard */}
+      {showStatistics && responses.length > 0 && (
+        <div className="mb-6">
+          <StatisticsChart responses={responses} />
+        </div>
+      )}
 
       {/* Region/District Filters */}
       {uniqueRegions.length > 0 && (

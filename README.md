@@ -70,6 +70,7 @@ Affected People → CrisisKit Form → AI Triage → Google Sheets → Volunteer
 - **Smart Duplicate Detection** - Prevents spam, tracks updates
 - **Region/District Selection** - Pre-configured location dropdowns (Hong Kong, LA, etc.)
 - **Real-Time Dashboard** - Color-coded urgency, status tracking, filtering
+- **Visual Statistics & Charts** - Urgency distribution, region heatmaps, timeline trends
 - **Real-Time Google Sheets Sync** - Auto-sync new submissions to your Sheet via webhook
 - **One-Click Google Sheets Export** - Copy-paste ready for team collaboration
 - **Data Portability** - Import/export JSON backups
@@ -234,6 +235,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 **v1.0** (Current)
 - [x] 1-click incident creation
 - [x] AI urgency classification
+- [x] Visual statistics dashboard with charts
 - [x] CSV export
 - [x] Google Sheets auto-sync webhook
 - [x] Google Sheets backend

@@ -230,8 +230,9 @@ export const Home: React.FC = () => {
              <li><strong>10-Second Form Creation</strong> - No account, no setup, just create and share</li>
              <li><strong>Mobile-First Design</strong> - Large buttons, SOS location button, works on any phone</li>
              <li><strong>AI-Powered Triage</strong> - Gemini AI classifies Critical/Moderate/Low urgency automatically</li>
+             <li><strong>Visual Statistics</strong> - See urgency distribution, region heatmaps, and timeline trends at a glance</li>
              <li><strong>Smart Duplicate Detection</strong> - Prevents spam, tracks updates from same contact</li>
-             <li><strong>One-Click Google Sheets Export</strong> - Copy-paste ready for volunteer collaboration</li>
+             <li><strong>Auto-Sync to Google Sheets</strong> - Real-time webhook sync or one-click export for volunteer collaboration</li>
              <li><strong>Region/District Selection</strong> - Pre-configured dropdowns for fast location tracking</li>
           </ul>
 
