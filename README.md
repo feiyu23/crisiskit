@@ -65,6 +65,7 @@ Affected People → CrisisKit Form → AI Triage → Google Sheets → Volunteer
 
 ### 🎯 **For Crisis Organizers**
 
+- **Crisis Scenario Templates** - 12+ pre-configured templates for fires, floods, earthquakes, power outages, and more
 - **10-Second Form Creation** - No account, no setup, just create and share
 - **AI-Powered Triage** - Gemini AI classifies Critical/Moderate/Low urgency
 - **Smart Duplicate Detection** - Prevents spam, tracks updates
@@ -82,6 +83,37 @@ Affected People → CrisisKit Form → AI Triage → Google Sheets → Volunteer
 - **Minimal Friction** - Only essential fields (Name, Contact, Location, Needs)
 - **No Login Required** - Submit help requests immediately
 - **Privacy-Conscious** - Data stays with community organizers
+
+---
+
+## 🎨 Pre-Configured Templates
+
+CrisisKit includes 12+ crisis scenario templates to get you started instantly:
+
+**Natural Disasters:**
+- 🔥 Building Fire Emergency
+- 🌊 Flood Emergency
+- 🏚️ Earthquake Response
+- 🌪️ Typhoon/Hurricane Emergency
+
+**Infrastructure Emergencies:**
+- ⚡ Major Power Outage
+- 💧 Water Contamination/Shortage
+- ☠️ Gas Leak Emergency
+
+**Community Emergencies:**
+- 🚨 Mass Evacuation
+- 🏠 Emergency Shelter Coordination
+- 🍞 Food Distribution Emergency
+
+**Health Emergencies:**
+- 🦠 Disease Outbreak Response
+
+Each template includes:
+- Pre-filled form titles and descriptions
+- Recommended region/district breakdown
+- Context-appropriate instructions for affected people
+- Optimized for specific crisis scenarios
 
 ---
 
@@ -233,6 +265,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 ## 🌍 Roadmap
 
 **v1.0** (Current)
+- [x] 12+ pre-configured crisis scenario templates
 - [x] 1-click incident creation
 - [x] AI urgency classification
 - [x] Visual statistics dashboard with charts

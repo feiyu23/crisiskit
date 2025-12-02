@@ -4,7 +4,8 @@ import { storageService } from '../services/storage';
 import { Region } from '../types';
 import { Button } from '../components/Button';
 import { Input, TextArea } from '../components/Input';
-import { ArrowLeft, Plus, X } from 'lucide-react';
+import { ArrowLeft, Plus, X, Sparkles } from 'lucide-react';
+import { CRISIS_TEMPLATES, TEMPLATE_CATEGORIES, getTemplateById } from '../utils/crisisTemplates';
 
 // Preset region templates
 const REGION_PRESETS = {
@@ -26,10 +27,30 @@ export const CreateIncident: React.FC = () => {
   const [enableRegions, setEnableRegions] = useState(false);
   const [selectedPreset, setSelectedPreset] = useState<string>('none');
   const [regions, setRegions] = useState<Region[]>([]);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>('');
+  const [showTemplates, setShowTemplates] = useState(true);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
   });
+
+  const handleTemplateSelect = (templateId: string) => {
+    const template = getTemplateById(templateId);
+    if (!template) return;
+
+    setSelectedTemplate(templateId);
+    setFormData({
+      title: template.name,
+      description: template.formDescription
+    });
+
+    if (template.regions && template.regions.length > 0) {
+      setRegions(template.regions);
+      setEnableRegions(true);
+    }
+
+    setShowTemplates(false);
+  };
 
   const handlePresetChange = (preset: string) => {
     setSelectedPreset(preset);
@@ -88,7 +109,91 @@ export const CreateIncident: React.FC = () => {
 
       <div className="bg-white shadow-sm rounded-xl border border-gray-200 p-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Create New Incident Form</h1>
-        
+
+        {/* Template Selection */}
+        {showTemplates && (
+          <div className="mb-8 p-6 bg-gradient-to-br from-primary-50 to-blue-50 border-2 border-primary-200 rounded-xl">
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkles className="w-5 h-5 text-primary-600" />
+              <h2 className="text-lg font-bold text-gray-900">Quick Start with Template</h2>
+            </div>
+            <p className="text-sm text-gray-600 mb-6">
+              Choose a pre-configured template for common crisis scenarios, or start from scratch.
+            </p>
+
+            {TEMPLATE_CATEGORIES.map(category => {
+              const templates = CRISIS_TEMPLATES.filter(t => t.category === category.id);
+              return (
+                <div key={category.id} className="mb-6">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                    <span className="text-lg">{category.icon}</span>
+                    {category.name}
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {templates.map(template => (
+                      <button
+                        key={template.id}
+                        type="button"
+                        onClick={() => handleTemplateSelect(template.id)}
+                        className="text-left p-4 bg-white border-2 border-gray-200 rounded-lg hover:border-primary-400 hover:shadow-md transition-all group"
+                      >
+                        <div className="flex items-start gap-3">
+                          <span className="text-2xl flex-shrink-0">{template.icon}</span>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">
+                              {template.name}
+                            </h4>
+                            <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                              {template.description}
+                            </p>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+
+            <div className="pt-4 border-t border-gray-200 mt-6">
+              <button
+                type="button"
+                onClick={() => setShowTemplates(false)}
+                className="text-sm text-gray-600 hover:text-gray-900 font-medium"
+              >
+                Skip templates and create from scratch →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {selectedTemplate && (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-start gap-3">
+            <div className="text-2xl">{getTemplateById(selectedTemplate)?.icon}</div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-green-900">
+                Template selected: {getTemplateById(selectedTemplate)?.name}
+              </p>
+              <p className="text-xs text-green-700 mt-1">
+                You can still customize the form below before creating.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedTemplate('');
+                setShowTemplates(true);
+                setFormData({ title: '', description: '' });
+                setRegions([]);
+                setEnableRegions(false);
+              }}
+              className="text-green-600 hover:text-green-800"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <Input 
             label="Incident Title" 
