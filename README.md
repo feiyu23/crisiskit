@@ -200,7 +200,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## 📜 License
 
-MIT © [Sparksverse](https://sparksverse.com)
+MIT © [Sparksverse](https://www.sparksverse.com)
 
 This project is open-source and free to use for any purpose, including commercial projects. See [LICENSE](LICENSE) for details.
 
@@ -227,11 +227,11 @@ Inspired by grassroots responders during the 2024 Hong Kong fire who coordinated
 - **GitHub Issues**: Bug reports and feature requests
 - **Discussions**: Community Q&A and ideas
 - **Email**: [hello@sparksverse.com](mailto:hello@sparksverse.com)
-- **Website**: [https://sparksverse.com](https://sparksverse.com)
+- **Website**: [https://www.sparksverse.com](https://www.sparksverse.com)
 
 ---
 
 <p align="center">
-  <strong>Built with ❤️ by <a href="https://sparksverse.com">Sparksverse</a></strong><br>
+  <strong>Built with ❤️ by <a href="https://www.sparksverse.com">Sparksverse</a></strong><br>
   <em>Tech for communities, by communities</em>
 </p>
