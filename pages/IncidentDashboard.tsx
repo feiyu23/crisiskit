@@ -10,11 +10,16 @@ import { RelativeTime } from '../components/RelativeTime';
 import { exportToCSV } from '../utils/csvExport';
 import { exportToGoogleSheets } from '../utils/googleSheetsExport';
 import { ResponseStatus } from '../types';
-import { ArrowLeft, Share2, RefreshCw, AlertCircle, FileText, ExternalLink, Download, Sheet, Settings, BarChart3, Map, List } from 'lucide-react';
+import { ArrowLeft, Share2, RefreshCw, AlertCircle, FileText, ExternalLink, Download, Sheet, Settings, BarChart3, Map, List, CheckSquare, Square, FileJson, Upload, QrCode } from 'lucide-react';
 import { GoogleSheetsSetup } from '../components/GoogleSheetsSetup';
 import { StatisticsChart } from '../components/StatisticsChart';
 import { MapView } from '../components/MapView';
 import { ImageGallery } from '../components/ImageGallery';
+import { EmergencyAudioAlert } from '../components/EmergencyAudioAlert';
+import { QRScannerModal } from '../components/QRScannerModal';
+
+import { calculateDistanceKm, parseLocationCoords } from '../utils/geoDistance';
+import { Navigation } from 'lucide-react';
 
 export const IncidentDashboard: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -26,7 +31,11 @@ export const IncidentDashboard: React.FC = () => {
   const [districtFilter, setDistrictFilter] = useState<string>('');
   const [showSheetsSetup, setShowSheetsSetup] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
+  const [showQRScanner, setShowQRScanner] = useState(false);
   const [viewMode, setViewMode] = useState<'table' | 'map'>('table');
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [responderCoords, setResponderCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [sortByDistance, setSortByDistance] = useState(false);
 
   const loadData = useCallback(async () => {
     if (!id) return;
@@ -66,7 +75,7 @@ export const IncidentDashboard: React.FC = () => {
     const unclassified = responses.filter(r => !r.aiClassification);
     
     for (const res of unclassified) {
-      const classification = await geminiService.classifyUrgency(res.needs, res.location);
+      const classification = await geminiService.classifyUrgency(res.needs, res.location, res.images);
       const updated = { ...res, aiClassification: classification };
       await storageService.updateResponse(updated);
       
@@ -88,6 +97,40 @@ export const IncidentDashboard: React.FC = () => {
     exportToCSV(responses, incident.title);
   };
 
+  const handleExportJSON = () => {
+    if (!incident || responses.length === 0) return;
+    const backupData = {
+      incident,
+      responses,
+      exportedAt: new Date().toISOString()
+    };
+    const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `crisiskit_${incident.title.replace(/\s+/g, '_')}_backup.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportJSON = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !id) return;
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      if (Array.isArray(data.responses)) {
+        for (const res of data.responses) {
+          await storageService.submitResponse({ ...res, incidentId: id });
+        }
+        await loadData();
+        alert(`Successfully imported ${data.responses.length} responses!`);
+      }
+    } catch (err) {
+      alert('Failed to import JSON file. Format may be invalid.');
+    }
+  };
+
   const handleExportToSheets = async () => {
     if (!incident || responses.length === 0) return;
     const result = await exportToGoogleSheets(incident, responses);
@@ -106,6 +149,14 @@ export const IncidentDashboard: React.FC = () => {
 
     await storageService.updateResponse(updated);
     setResponses(prev => prev.map(r => r.id === responseId ? updated : r));
+  };
+
+  const handleBatchUpdateStatus = async (newStatus: ResponseStatus) => {
+    if (selectedIds.length === 0) return;
+    for (const resId of selectedIds) {
+      await updateResponseStatus(resId, newStatus);
+    }
+    setSelectedIds([]);
   };
 
   // Helper to render location with potential links
@@ -132,6 +183,22 @@ export const IncidentDashboard: React.FC = () => {
     });
   };
 
+  const handleToggleProximitySort = () => {
+    if (!responderCoords) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            setResponderCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+            setSortByDistance(true);
+          },
+          (err) => alert('Could not fetch responder location for proximity sorting.')
+        );
+      }
+    } else {
+      setSortByDistance(!sortByDistance);
+    }
+  };
+
   if (loading) return <div className="p-12 text-center text-gray-500">Loading incident data...</div>;
   if (!incident) return <div className="p-12 text-center text-danger-500">Incident not found.</div>;
 
@@ -142,12 +209,22 @@ export const IncidentDashboard: React.FC = () => {
     : responses;
   const uniqueDistricts = [...new Set(filteredByRegion.map(r => r.district).filter(Boolean))];
 
-  // Apply filters
-  const filteredResponses = responses.filter(r => {
+  // Apply filters & distance sorting
+  let filteredResponses = responses.filter(r => {
     if (regionFilter && r.region !== regionFilter) return false;
     if (districtFilter && r.district !== districtFilter) return false;
     return true;
   });
+
+  if (sortByDistance && responderCoords) {
+    filteredResponses = [...filteredResponses].sort((a, b) => {
+      const coordsA = parseLocationCoords(a.location);
+      const coordsB = parseLocationCoords(b.location);
+      const distA = coordsA ? calculateDistanceKm(responderCoords.lat, responderCoords.lng, coordsA.lat, coordsA.lng) : 9999;
+      const distB = coordsB ? calculateDistanceKm(responderCoords.lat, responderCoords.lng, coordsB.lat, coordsB.lng) : 9999;
+      return distA - distB;
+    });
+  }
 
   return (
     <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -162,7 +239,16 @@ export const IncidentDashboard: React.FC = () => {
             {responses.length} responses collected • Created {new Date(incident.createdAt).toLocaleDateString()}
           </p>
         </div>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2.5 items-center">
+          <EmergencyAudioAlert responses={responses} />
+          <Button
+            onClick={handleToggleProximitySort}
+            variant={sortByDistance ? "primary" : "secondary"}
+            title="Sort responses by distance to responder GPS"
+          >
+            <Navigation className="mr-2 h-4 w-4 text-blue-500" />
+            {sortByDistance ? 'Nearest First' : 'Proximity Sort'}
+          </Button>
           <Button
             onClick={() => setViewMode(viewMode === 'table' ? 'map' : 'table')}
             variant={viewMode === 'map' ? "primary" : "secondary"}
@@ -202,7 +288,20 @@ export const IncidentDashboard: React.FC = () => {
           </Button>
           <Button onClick={handleExportCSV} variant="secondary" disabled={responses.length === 0}>
             <Download className="mr-2 h-4 w-4" />
-            Download CSV
+            CSV
+          </Button>
+          <Button onClick={handleExportJSON} variant="secondary" disabled={responses.length === 0} title="Backup Incident Data">
+            <FileJson className="mr-2 h-4 w-4" />
+            Backup JSON
+          </Button>
+          <label className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer">
+            <Upload className="mr-2 h-4 w-4" />
+            Restore JSON
+            <input type="file" accept=".json" onChange={handleImportJSON} className="hidden" />
+          </label>
+          <Button onClick={() => setShowQRScanner(true)} variant="primary">
+            <QrCode className="mr-2 h-4 w-4" />
+            Scan Victim QR
           </Button>
           <Button onClick={copyPublicLink}>
             <Share2 className="mr-2 h-4 w-4" />
@@ -210,6 +309,35 @@ export const IncidentDashboard: React.FC = () => {
           </Button>
         </div>
       </div>
+
+      {/* Batch Action Toolbar */}
+      {selectedIds.length > 0 && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between">
+          <span className="text-sm font-medium text-blue-900">
+            {selectedIds.length} item(s) selected
+          </span>
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleBatchUpdateStatus('in_progress')}
+              className="px-3 py-1 bg-blue-600 text-white rounded text-xs font-medium hover:bg-blue-700"
+            >
+              Mark In Progress
+            </button>
+            <button
+              onClick={() => handleBatchUpdateStatus('resolved')}
+              className="px-3 py-1 bg-green-600 text-white rounded text-xs font-medium hover:bg-green-700"
+            >
+              Mark Resolved
+            </button>
+            <button
+              onClick={() => setSelectedIds([])}
+              className="px-3 py-1 text-gray-600 text-xs hover:underline"
+            >
+              Deselect All
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Statistics Dashboard */}
       {showStatistics && responses.length > 0 && (
@@ -304,6 +432,20 @@ export const IncidentDashboard: React.FC = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
+                  <th scope="col" className="px-4 py-3 text-left">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.length > 0 && selectedIds.length === filteredResponses.length}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedIds(filteredResponses.map(r => r.id));
+                        } else {
+                          setSelectedIds([]);
+                        }
+                      }}
+                      className="rounded text-primary-600 focus:ring-primary-500 h-4 w-4"
+                    />
+                  </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Urgency</th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name / Contact</th>
@@ -315,6 +457,7 @@ export const IncidentDashboard: React.FC = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredResponses.map((response) => {
                   const urgency = response.aiClassification?.urgency || 'UNKNOWN';
+                  const isSelected = selectedIds.includes(response.id);
                   const rowClass = urgency === 'CRITICAL'
                     ? 'bg-red-50 hover:bg-red-100 border-l-4 border-red-500'
                     : urgency === 'MODERATE'
@@ -323,6 +466,20 @@ export const IncidentDashboard: React.FC = () => {
 
                   return (
                   <tr key={response.id} className={rowClass}>
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedIds(prev => [...prev, response.id]);
+                          } else {
+                            setSelectedIds(prev => prev.filter(id => id !== response.id));
+                          }
+                        }}
+                        className="rounded text-primary-600 focus:ring-primary-500 h-4 w-4"
+                      />
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <StatusBadge status={response.status || 'pending'} />
                     </td>
@@ -355,6 +512,18 @@ export const IncidentDashboard: React.FC = () => {
                         <div className="break-words">
                           {renderLocation(response.location)}
                         </div>
+                        {responderCoords && (() => {
+                          const victimCoords = parseLocationCoords(response.location);
+                          if (victimCoords) {
+                            const dist = calculateDistanceKm(responderCoords.lat, responderCoords.lng, victimCoords.lat, victimCoords.lng);
+                            return (
+                              <div className="inline-block mt-1 px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded font-semibold text-[11px]">
+                                🧭 {dist} km away
+                              </div>
+                            );
+                          }
+                          return null;
+                        })()}
                       </div>
                       {response.images && response.images.length > 0 && (
                         <div className="mt-2">
@@ -398,6 +567,27 @@ export const IncidentDashboard: React.FC = () => {
       {/* Google Sheets Setup Modal */}
       {showSheetsSetup && id && (
         <GoogleSheetsSetup incidentId={id} onClose={() => setShowSheetsSetup(false)} />
+      )}
+
+      {/* Offline QR Scanner Modal */}
+      {showQRScanner && id && (
+        <QRScannerModal
+          incidentId={id}
+          onScanSuccess={async (scannedData) => {
+            await storageService.submitResponse({
+              incidentId: id,
+              name: scannedData.name || 'Anonymous',
+              contact: scannedData.contact || 'N/A',
+              needs: scannedData.needs || 'No details provided',
+              location: scannedData.location || 'Unknown',
+              region: scannedData.region,
+              district: scannedData.district,
+              images: scannedData.images || [],
+            });
+            await loadData();
+          }}
+          onClose={() => setShowQRScanner(false)}
+        />
       )}
     </div>
   );

@@ -6,7 +6,9 @@ import { Incident } from '../types';
 import { Button } from '../components/Button';
 import { Input, TextArea } from '../components/Input';
 import { ImageUpload } from '../components/ImageUpload';
-import { CheckCircle, MapPin, ShieldAlert, X, AlertTriangle, Wifi, WifiOff } from 'lucide-react';
+import { CheckCircle, MapPin, ShieldAlert, X, AlertTriangle, Wifi, WifiOff, MessageSquare, QrCode } from 'lucide-react';
+import { VoiceRecorder } from '../components/VoiceRecorder';
+import { QRCodeModal } from '../components/QRCodeModal';
 
 export const PublicSubmit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,6 +17,8 @@ export const PublicSubmit: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null);
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [submittedPayload, setSubmittedPayload] = useState<any>(null);
 
   // SOS & Location State
   const [isLocating, setIsLocating] = useState(false);
@@ -156,6 +160,7 @@ export const PublicSubmit: React.FC = () => {
     setIsSubmitting(true);
     try {
       await storageService.submitResponse(submissionData);
+      setSubmittedPayload(submissionData);
       setSubmitted(true);
       setDuplicateWarning(null);
       window.scrollTo(0, 0);
@@ -166,6 +171,7 @@ export const PublicSubmit: React.FC = () => {
       // If online submission fails, save to offline queue as fallback
       try {
         await offlineQueue.add(submissionData);
+        setSubmittedPayload(submissionData);
         setSavedOffline(true);
         setSubmitted(true);
         console.log('✅ Saved to offline queue as fallback');
@@ -176,6 +182,12 @@ export const PublicSubmit: React.FC = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleSendEmergencySMS = () => {
+    const payload = submittedPayload || formData;
+    const bodyText = `🚨SOS crisis request:\nName: ${payload.name}\nContact: ${payload.contact}\nNeeds: ${payload.needs}\nLoc: ${payload.location}`;
+    window.location.href = `sms:?body=${encodeURIComponent(bodyText)}`;
   };
 
   if (loading) return <div className="p-8 text-center text-gray-500">Loading form...</div>;
@@ -195,23 +207,6 @@ export const PublicSubmit: React.FC = () => {
                  <p className="text-gray-500 mb-6">
                    Your submission has been saved locally and will be automatically uploaded when you're back online.
                  </p>
-                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-sm text-left">
-                   <p className="font-semibold text-blue-900 mb-2">What happens next:</p>
-                   <ul className="space-y-2 text-blue-800">
-                     <li className="flex items-start">
-                       <span className="text-blue-600 mr-2">•</span>
-                       Your data is safely stored on this device
-                     </li>
-                     <li className="flex items-start">
-                       <span className="text-blue-600 mr-2">•</span>
-                       It will sync automatically when network is restored
-                     </li>
-                     <li className="flex items-start">
-                       <span className="text-blue-600 mr-2">•</span>
-                       You can close this page - sync will happen in background
-                     </li>
-                   </ul>
-                 </div>
                </>
              ) : (
                <>
@@ -224,11 +219,39 @@ export const PublicSubmit: React.FC = () => {
                  </p>
                </>
              )}
-             <Button onClick={() => window.location.reload()} variant="secondary">
+
+             {/* Offline Zero-Network Transfer Options */}
+             <div className="space-y-3 mb-6 pt-2">
+               <button
+                 onClick={() => setShowQRModal(true)}
+                 className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-gray-900 text-white rounded-xl font-bold text-sm shadow hover:bg-black transition"
+               >
+                 <QrCode className="w-5 h-5 text-yellow-400" />
+                 Show SOS QR Code to Responders
+               </button>
+
+               <button
+                 onClick={handleSendEmergencySMS}
+                 className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-red-600 text-white rounded-xl font-bold text-sm shadow hover:bg-red-700 transition"
+               >
+                 <MessageSquare className="w-5 h-5" />
+                 Send Emergency SMS (Data Offline Fallback)
+               </button>
+             </div>
+
+             <Button onClick={() => window.location.reload()} variant="secondary" className="w-full">
                Submit Another Response
              </Button>
            </div>
         </div>
+
+        {showQRModal && submittedPayload && (
+          <QRCodeModal
+            data={submittedPayload}
+            title="SOS Response QR Payload"
+            onClose={() => setShowQRModal(false)}
+          />
+        )}
       </div>
     );
   }
@@ -374,15 +397,28 @@ export const PublicSubmit: React.FC = () => {
                  ) : null}
             </div>
 
-            <TextArea
-              label="What do you need?"
-              placeholder="e.g. Water, Medical attention, Trapped..."
-              value={formData.needs}
-              onChange={e => setFormData({...formData, needs: e.target.value})}
-              rows={4}
-              required
-              className={formData.needs.includes('SOS') ? 'border-danger-300 bg-danger-50' : ''}
-            />
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-sm font-medium text-gray-700">What do you need? <span className="text-red-500">*</span></label>
+                <VoiceRecorder
+                  onTranscription={(spokenText) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      needs: prev.needs ? `${prev.needs}\n🎙️ ${spokenText}` : `🎙️ ${spokenText}`
+                    }));
+                  }}
+                />
+              </div>
+              <TextArea
+                label=""
+                placeholder="e.g. Water, Medical attention, Trapped... (or tap Voice SOS to speak)"
+                value={formData.needs}
+                onChange={e => setFormData({...formData, needs: e.target.value})}
+                rows={4}
+                required
+                className={formData.needs.includes('SOS') ? 'border-danger-300 bg-danger-50' : ''}
+              />
+            </div>
 
             <ImageUpload
               images={formData.images}

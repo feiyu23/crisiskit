@@ -108,7 +108,18 @@ export default defineConfig(({ mode }) => {
       },
       build: {
         rollupOptions: {
-          external: []
+          external: [],
+          output: {
+            manualChunks(id) {
+              if (id.includes('node_modules')) {
+                if (id.includes('leaflet')) return 'vendor-map';
+                if (id.includes('@google/generative-ai')) return 'vendor-ai';
+                if (id.includes('lucide-react')) return 'vendor-icons';
+                if (id.includes('@supabase') || id.includes('dexie')) return 'vendor-db';
+                return 'vendor';
+              }
+            }
+          }
         }
       },
       optimizeDeps: {
