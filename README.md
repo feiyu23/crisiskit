@@ -47,6 +47,7 @@ The tools were **fragmented and messy—but they worked far better than sophisti
 | **📊 Live Dashboard** | Color-coded urgency, filtering, statistics, trends | Coordinators see patterns and bottlenecks immediately |
 | **📱 Mobile-First Design** | Large buttons, minimal text, works on any phone | Most people access crisis info on phones |
 | **🚫 Duplicate Detection** | Prevents spam, flags potential updates | Cuts down noise for coordinators |
+| **📡 WebRTC P2P Mesh** | Peer-to-peer offline broadcast & emergency sync between devices | Works even when internet/cellular towers are down |
 | **🔒 Privacy-First** | Data stays with community, not third parties | Trust is essential in crisis |
 
 ---

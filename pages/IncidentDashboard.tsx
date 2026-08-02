@@ -17,6 +17,8 @@ import { MapView } from '../components/MapView';
 import { ImageGallery } from '../components/ImageGallery';
 import { EmergencyAudioAlert } from '../components/EmergencyAudioAlert';
 import { QRScannerModal } from '../components/QRScannerModal';
+import { PeerBroadcastModal } from '../components/PeerBroadcastModal';
+import { Radio } from 'lucide-react';
 
 import { calculateDistanceKm, parseLocationCoords } from '../utils/geoDistance';
 import { Navigation } from 'lucide-react';
@@ -32,6 +34,7 @@ export const IncidentDashboard: React.FC = () => {
   const [showSheetsSetup, setShowSheetsSetup] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
   const [showQRScanner, setShowQRScanner] = useState(false);
+  const [showPeerSync, setShowPeerSync] = useState(false);
   const [viewMode, setViewMode] = useState<'table' | 'map'>('table');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [responderCoords, setResponderCoords] = useState<{ lat: number; lng: number } | null>(null);
@@ -302,6 +305,10 @@ export const IncidentDashboard: React.FC = () => {
           <Button onClick={() => setShowQRScanner(true)} variant="primary">
             <QrCode className="mr-2 h-4 w-4" />
             Scan Victim QR
+          </Button>
+          <Button onClick={() => setShowPeerSync(true)} variant="secondary" title="Offline WebRTC P2P Emergency Mesh Broadcast">
+            <Radio className="mr-2 h-4 w-4 text-amber-500" />
+            P2P Mesh Broadcast
           </Button>
           <Button onClick={copyPublicLink}>
             <Share2 className="mr-2 h-4 w-4" />
@@ -587,6 +594,21 @@ export const IncidentDashboard: React.FC = () => {
             await loadData();
           }}
           onClose={() => setShowQRScanner(false)}
+        />
+      )}
+
+      {/* Offline P2P WebRTC Sync Modal */}
+      {showPeerSync && (
+        <PeerBroadcastModal
+          isOpen={showPeerSync}
+          onClose={() => setShowPeerSync(false)}
+          incidents={incident ? [incident] : []}
+          onImportIncidents={async (importedIncidents) => {
+            for (const inc of importedIncidents) {
+              await storageService.saveIncident(inc);
+            }
+            await loadData();
+          }}
         />
       )}
     </div>
