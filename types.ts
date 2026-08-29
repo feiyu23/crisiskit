@@ -39,7 +39,19 @@ export interface IncidentsRepo {
   getIncidents(): Promise<Incident[]>;
   getIncidentById(id: string): Promise<Incident | undefined>;
   createIncident(incident: Omit<Incident, 'id' | 'createdAt'>): Promise<Incident>;
+  saveIncident?(incident: Incident): Promise<void>;
   getResponses(incidentId: string): Promise<IncidentResponse[]>;
   submitResponse(response: Omit<IncidentResponse, 'id' | 'submittedAt'>): Promise<IncidentResponse>;
   updateResponse(response: IncidentResponse): Promise<void>;
+}
+
+export interface SafetyCheckin {
+  id: string;
+  name: string;
+  phoneLast4: string;
+  companionsCount: number;
+  status: 'safe' | 'injured' | 'needs_evacuation' | 'critical';
+  location: string;
+  note?: string;
+  timestamp: number;
 }

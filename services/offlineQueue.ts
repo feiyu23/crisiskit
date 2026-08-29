@@ -1,5 +1,5 @@
 import Dexie, { Table } from 'dexie';
-import { IncidentResponse } from '../types';
+import { IncidentResponse, SafetyCheckin } from '../types';
 
 // Queue item with retry metadata
 export interface QueuedSubmission {
@@ -12,21 +12,28 @@ export interface QueuedSubmission {
 }
 
 // IndexedDB database using Dexie
-class OfflineDB extends Dexie {
+export class OfflineDB extends Dexie {
   submissions!: Table<QueuedSubmission, number>;
+  safetyCheckins!: Table<SafetyCheckin, string>;
 
   constructor() {
     super('CrisisKitOffline');
 
-    // Define database schema
+    // Define database schema version 1
     this.version(1).stores({
       submissions: '++id, timestamp, retries'
+    });
+
+    // Version 2: adds safety check-in registry for missing persons / reunification
+    this.version(2).stores({
+      submissions: '++id, timestamp, retries',
+      safetyCheckins: 'id, name, phoneLast4, timestamp, status'
     });
   }
 }
 
 // Create singleton database instance
-const db = new OfflineDB();
+export const db = new OfflineDB();
 
 // Maximum retry attempts
 const MAX_RETRIES = 3;

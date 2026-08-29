@@ -3,8 +3,12 @@ import { Link } from 'react-router-dom';
 import { storageService } from '../services/storage';
 import { Incident, IncidentResponse } from '../types';
 import { Button } from '../components/Button';
-import { AlertTriangle, Plus, ArrowRight, BookOpen, Download, Upload } from 'lucide-react';
+import { AlertTriangle, Plus, ArrowRight, BookOpen, Download, Upload, Radio, ShieldCheck, AlertOctagon, HeartHandshake, Mountain } from 'lucide-react';
 import { exportAllDataJSON, importDataJSON } from '../utils/dataPortability';
+import { EmergencyBroadcastModal } from '../components/EmergencyBroadcastModal';
+import { SafetyCheckinModal } from '../components/SafetyCheckinModal';
+import { EmergencyBeaconModal } from '../components/EmergencyBeaconModal';
+import { DisasterFieldGuideModal } from '../components/DisasterFieldGuideModal';
 
 export const Home: React.FC = () => {
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -12,6 +16,12 @@ export const Home: React.FC = () => {
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Survival Modals state
+  const [showBroadcastModal, setShowBroadcastModal] = useState(false);
+  const [showCheckinModal, setShowCheckinModal] = useState(false);
+  const [showBeaconModal, setShowBeaconModal] = useState(false);
+  const [showGuideModal, setShowGuideModal] = useState(false);
 
   useEffect(() => {
     loadIncidents();
@@ -118,6 +128,86 @@ export const Home: React.FC = () => {
           10-second crisis data collection with AI triage.<br />
           Share a link. Collect needs. Export to Google Sheets.
         </p>
+      </div>
+
+      {/* Highland Mudslide & Extreme Disaster Survival Center */}
+      <div className="mb-10 p-5 rounded-2xl border border-red-200 dark:border-red-900/50 bg-gradient-to-br from-red-50/70 via-white to-amber-50/50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 mb-4 border-b border-red-100 dark:border-gray-800">
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-red-600 text-white rounded-xl shadow-md">
+              <Mountain className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="font-extrabold text-gray-900 dark:text-white text-base flex items-center gap-2">
+                高山泥石流与极端孤岛应急自救中心
+                <span className="text-[10px] bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300 font-bold px-2 py-0.5 rounded-full">
+                  西藏-尼泊尔泥石流应急特别版
+                </span>
+              </h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                针对断网断电、高寒失温、道路冲毁与亲友失联场景的离线生命线工具
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+          <button
+            onClick={() => setShowBroadcastModal(true)}
+            className="flex flex-col p-3.5 rounded-xl border border-red-200 dark:border-red-800/60 bg-white dark:bg-gray-800/80 hover:border-red-400 hover:shadow-md transition text-left group"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 group-hover:scale-110 transition-transform">
+                <Radio className="w-4 h-4" />
+              </div>
+              <span className="text-[10px] font-bold text-red-600 dark:text-red-400">零流量/短信</span>
+            </div>
+            <div className="font-bold text-sm text-gray-900 dark:text-white">亲友紧急联络</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">一键生成GPS短报文直发短信/卫星</div>
+          </button>
+
+          <button
+            onClick={() => setShowCheckinModal(true)}
+            className="flex flex-col p-3.5 rounded-xl border border-green-200 dark:border-green-800/60 bg-white dark:bg-gray-800/80 hover:border-green-400 hover:shadow-md transition text-left group"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform">
+                <HeartHandshake className="w-4 h-4" />
+              </div>
+              <span className="text-[10px] font-bold text-green-600 dark:text-green-400">离线名册</span>
+            </div>
+            <div className="font-bold text-sm text-gray-900 dark:text-white">报平安 & 寻亲站</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">安置点人员登记与姓名尾号模糊快查</div>
+          </button>
+
+          <button
+            onClick={() => setShowBeaconModal(true)}
+            className="flex flex-col p-3.5 rounded-xl border border-orange-200 dark:border-orange-800/60 bg-white dark:bg-gray-800/80 hover:border-orange-400 hover:shadow-md transition text-left group"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 group-hover:scale-110 transition-transform">
+                <AlertOctagon className="w-4 h-4" />
+              </div>
+              <span className="text-[10px] font-bold text-orange-600 dark:text-orange-400">视听呼叫</span>
+            </div>
+            <div className="font-bold text-sm text-gray-900 dark:text-white">声光救援信标</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">全屏SOS频闪与3.1kHz穿透求生哨</div>
+          </button>
+
+          <button
+            onClick={() => setShowGuideModal(true)}
+            className="flex flex-col p-3.5 rounded-xl border border-amber-200 dark:border-amber-800/60 bg-white dark:bg-gray-800/80 hover:border-amber-400 hover:shadow-md transition text-left group"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 group-hover:scale-110 transition-transform">
+                <BookOpen className="w-4 h-4" />
+              </div>
+              <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400">离线自救</span>
+            </div>
+            <div className="font-bold text-sm text-gray-900 dark:text-white">泥石流避险手册</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">垂直两侧逃生、防失温与水净化</div>
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -245,6 +335,24 @@ export const Home: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Survival Modals */}
+      <EmergencyBroadcastModal
+        isOpen={showBroadcastModal}
+        onClose={() => setShowBroadcastModal(false)}
+      />
+      <SafetyCheckinModal
+        isOpen={showCheckinModal}
+        onClose={() => setShowCheckinModal(false)}
+      />
+      <EmergencyBeaconModal
+        isOpen={showBeaconModal}
+        onClose={() => setShowBeaconModal(false)}
+      />
+      <DisasterFieldGuideModal
+        isOpen={showGuideModal}
+        onClose={() => setShowGuideModal(false)}
+      />
     </div>
   );
 };

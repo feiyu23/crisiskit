@@ -37,3 +37,36 @@
     @apply border-l-4 border-primary-500 pl-4 italic my-6;
   }
 }
+
+/* ==========================================================================
+   Ultra Battery Saver Mode (Survival Mode)
+   True #000000 OLED pure black background, no shadows, no animations
+   ========================================================================== */
+html.survival-mode {
+  color-scheme: dark;
+}
+
+html.survival-mode body,
+html.survival-mode div,
+html.survival-mode main,
+html.survival-mode header,
+html.survival-mode footer,
+html.survival-mode nav {
+  background-color: #000000 !important;
+}
+
+html.survival-mode * {
+  animation: none !important;
+  transition: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html.survival-mode input,
+html.survival-mode textarea,
+html.survival-mode select {
+  background-color: #0d0d0d !important;
+  border-color: #333333 !important;
+  color: #ffffff !important;
+}

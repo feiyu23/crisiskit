@@ -32,6 +32,17 @@ export class InMemoryRepo implements IncidentsRepo {
     return newIncident;
   }
 
+  async saveIncident(incident: Incident): Promise<void> {
+    const incidents = await this.getIncidents();
+    const index = incidents.findIndex((i) => i.id === incident.id);
+    if (index >= 0) {
+      incidents[index] = incident;
+    } else {
+      incidents.unshift(incident);
+    }
+    localStorage.setItem(STORAGE_KEYS.INCIDENTS, JSON.stringify(incidents));
+  }
+
   async getResponses(incidentId: string): Promise<IncidentResponse[]> {
     await delay(100);
     const data = localStorage.getItem(STORAGE_KEYS.RESPONSES);

@@ -9,6 +9,11 @@ import { ImageUpload } from '../components/ImageUpload';
 import { CheckCircle, MapPin, ShieldAlert, X, AlertTriangle, Wifi, WifiOff, MessageSquare, QrCode } from 'lucide-react';
 import { VoiceRecorder } from '../components/VoiceRecorder';
 import { QRCodeModal } from '../components/QRCodeModal';
+import { EmergencyBroadcastModal } from '../components/EmergencyBroadcastModal';
+import { SafetyCheckinModal } from '../components/SafetyCheckinModal';
+import { EmergencyBeaconModal } from '../components/EmergencyBeaconModal';
+import { DisasterFieldGuideModal } from '../components/DisasterFieldGuideModal';
+import { Radio, HeartHandshake, AlertOctagon, BookOpen } from 'lucide-react';
 
 export const PublicSubmit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,6 +24,12 @@ export const PublicSubmit: React.FC = () => {
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null);
   const [showQRModal, setShowQRModal] = useState(false);
   const [submittedPayload, setSubmittedPayload] = useState<any>(null);
+
+  // High-altitude mudslide & survival modals
+  const [showBroadcastModal, setShowBroadcastModal] = useState(false);
+  const [showCheckinModal, setShowCheckinModal] = useState(false);
+  const [showBeaconModal, setShowBeaconModal] = useState(false);
+  const [showGuideModal, setShowGuideModal] = useState(false);
 
   // SOS & Location State
   const [isLocating, setIsLocating] = useState(false);
@@ -274,30 +285,86 @@ export const PublicSubmit: React.FC = () => {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        {/* Emergency Actions Bar */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          <button
-            type="button"
-            onClick={handleSOS}
-            disabled={isLocating}
-            className="flex flex-col items-center justify-center p-4 bg-danger-50 border-2 border-danger-200 rounded-xl text-danger-700 hover:bg-danger-100 hover:border-danger-300 transition-all active:scale-95"
-          >
-            {isLocating ? (
-              <span className="animate-spin h-6 w-6 border-2 border-danger-600 border-t-transparent rounded-full mb-1"></span>
-            ) : (
-              <MapPin className="h-6 w-6 mb-1" />
-            )}
-            <span className="font-bold text-sm">SOS Location</span>
-          </button>
+        {/* Emergency & Survival Actions Bar */}
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-red-100 dark:border-red-900/30 mb-6 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-red-600 dark:text-red-400 flex items-center gap-1.5">
+              <Radio className="w-4 h-4 animate-pulse" />
+              孤岛防灾与紧急联络工具箱
+            </span>
+            <span className="text-[10px] text-gray-400">零网络/卫星适配</span>
+          </div>
 
-          <button
-            type="button"
-            onClick={() => setShowSafetyTips(true)}
-            className="flex flex-col items-center justify-center p-4 bg-primary-50 border-2 border-primary-200 rounded-xl text-primary-700 hover:bg-primary-100 hover:border-primary-300 transition-all active:scale-95"
-          >
-            <ShieldAlert className="h-6 w-6 mb-1" />
-            <span className="font-bold text-sm">Self Rescue</span>
-          </button>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => setShowBroadcastModal(true)}
+              className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-300 hover:bg-red-100 transition-all text-left"
+            >
+              <Radio className="w-5 h-5 shrink-0 text-red-600 dark:text-red-400" />
+              <div>
+                <div className="font-bold text-xs">紧急联络亲友</div>
+                <div className="text-[10px] text-red-600/70 dark:text-red-300/70">一键短信/卫星发坐标</div>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowCheckinModal(true)}
+              className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 rounded-xl text-green-700 dark:text-green-300 hover:bg-green-100 transition-all text-left"
+            >
+              <HeartHandshake className="w-5 h-5 shrink-0 text-green-600 dark:text-green-400" />
+              <div>
+                <div className="font-bold text-xs">离线报平安/寻人</div>
+                <div className="text-[10px] text-green-600/70 dark:text-green-300/70">安置点名册登记查询</div>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowBeaconModal(true)}
+              className="flex items-center gap-2 p-3 bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800 rounded-xl text-orange-700 dark:text-orange-300 hover:bg-orange-100 transition-all text-left"
+            >
+              <AlertOctagon className="w-5 h-5 shrink-0 text-orange-600 dark:text-orange-400" />
+              <div>
+                <div className="font-bold text-xs">声光救援信标</div>
+                <div className="text-[10px] text-orange-600/70 dark:text-orange-300/70">SOS频闪与穿透高频哨</div>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowGuideModal(true)}
+              className="flex items-center gap-2 p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl text-amber-700 dark:text-amber-300 hover:bg-amber-100 transition-all text-left"
+            >
+              <BookOpen className="w-5 h-5 shrink-0 text-amber-600 dark:text-amber-400" />
+              <div>
+                <div className="font-bold text-xs">泥石流自救手册</div>
+                <div className="text-[10px] text-amber-600/70 dark:text-amber-300/70">垂直逃生与高原防失温</div>
+              </div>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 pt-1 border-t border-gray-100 dark:border-gray-700/50">
+            <button
+              type="button"
+              onClick={handleSOS}
+              disabled={isLocating}
+              className="flex items-center justify-center gap-1.5 py-2 px-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg text-xs font-semibold text-gray-800 dark:text-gray-200"
+            >
+              <MapPin className="w-3.5 h-3.5 text-red-500" />
+              {isLocating ? '正在获取GPS...' : '填入当前GPS'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowSafetyTips(true)}
+              className="flex items-center justify-center gap-1.5 py-2 px-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg text-xs font-semibold text-gray-800 dark:text-gray-200"
+            >
+              <ShieldAlert className="w-3.5 h-3.5 text-blue-500" />
+              通用避难常识
+            </button>
+          </div>
         </div>
 
         {locationError && (
@@ -484,6 +551,23 @@ export const PublicSubmit: React.FC = () => {
           </div>
         </div>
       )}
+      {/* High-altitude mudslide & survival modals */}
+      <EmergencyBroadcastModal
+        isOpen={showBroadcastModal}
+        onClose={() => setShowBroadcastModal(false)}
+      />
+      <SafetyCheckinModal
+        isOpen={showCheckinModal}
+        onClose={() => setShowCheckinModal(false)}
+      />
+      <EmergencyBeaconModal
+        isOpen={showBeaconModal}
+        onClose={() => setShowBeaconModal(false)}
+      />
+      <DisasterFieldGuideModal
+        isOpen={showGuideModal}
+        onClose={() => setShowGuideModal(false)}
+      />
     </div>
   );
 };

@@ -605,7 +605,9 @@ export const IncidentDashboard: React.FC = () => {
           incidents={incident ? [incident] : []}
           onImportIncidents={async (importedIncidents) => {
             for (const inc of importedIncidents) {
-              await storageService.saveIncident(inc);
+              if (storageService.saveIncident) {
+                await storageService.saveIncident(inc);
+              }
             }
             await loadData();
           }}
