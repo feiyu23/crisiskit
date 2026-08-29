@@ -9,6 +9,7 @@ import { EmergencyBroadcastModal } from '../components/EmergencyBroadcastModal';
 import { SafetyCheckinModal } from '../components/SafetyCheckinModal';
 import { EmergencyBeaconModal } from '../components/EmergencyBeaconModal';
 import { DisasterFieldGuideModal } from '../components/DisasterFieldGuideModal';
+import { BeaconOfHopeModal } from '../components/BeaconOfHopeModal';
 
 export const Home: React.FC = () => {
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -22,6 +23,7 @@ export const Home: React.FC = () => {
   const [showCheckinModal, setShowCheckinModal] = useState(false);
   const [showBeaconModal, setShowBeaconModal] = useState(false);
   const [showGuideModal, setShowGuideModal] = useState(false);
+  const [showHopeModal, setShowHopeModal] = useState(false);
 
   useEffect(() => {
     loadIncidents();
@@ -208,6 +210,32 @@ export const Home: React.FC = () => {
             <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">垂直两侧逃生、防失温与水净化</div>
           </button>
         </div>
+
+        {/* Beacon of Hope banner */}
+        <div className="mt-3 p-3.5 rounded-xl border border-pink-200/70 dark:border-pink-900/40 bg-gradient-to-r from-pink-50/80 via-rose-50/50 to-amber-50/60 dark:from-gray-800 dark:to-gray-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-pink-100 dark:bg-pink-950/60 text-pink-600 dark:text-pink-400 shrink-0">
+              <HeartHandshake className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
+                微光与希望 · 心理平复与互助自治站
+                <span className="text-[10px] text-amber-700 dark:text-amber-300 font-serif bg-amber-100 dark:bg-amber-900/40 px-1.5 py-0.5 rounded">
+                  བཀྲ་ཤིས་བདེ་ལེགས
+                </span>
+              </div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                4-7-8 呼吸平复光圈、72小时搜救时间线、临时避难自治角色、写给至亲的时空胶囊
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowHopeModal(true)}
+            className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white font-bold text-xs rounded-xl shadow transition whitespace-nowrap"
+          >
+            开启微光守护
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -352,6 +380,10 @@ export const Home: React.FC = () => {
       <DisasterFieldGuideModal
         isOpen={showGuideModal}
         onClose={() => setShowGuideModal(false)}
+      />
+      <BeaconOfHopeModal
+        isOpen={showHopeModal}
+        onClose={() => setShowHopeModal(false)}
       />
     </div>
   );

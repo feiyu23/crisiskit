@@ -13,7 +13,8 @@ import { EmergencyBroadcastModal } from '../components/EmergencyBroadcastModal';
 import { SafetyCheckinModal } from '../components/SafetyCheckinModal';
 import { EmergencyBeaconModal } from '../components/EmergencyBeaconModal';
 import { DisasterFieldGuideModal } from '../components/DisasterFieldGuideModal';
-import { Radio, HeartHandshake, AlertOctagon, BookOpen } from 'lucide-react';
+import { BeaconOfHopeModal } from '../components/BeaconOfHopeModal';
+import { Radio, HeartHandshake, AlertOctagon, BookOpen, Heart } from 'lucide-react';
 
 export const PublicSubmit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,6 +31,7 @@ export const PublicSubmit: React.FC = () => {
   const [showCheckinModal, setShowCheckinModal] = useState(false);
   const [showBeaconModal, setShowBeaconModal] = useState(false);
   const [showGuideModal, setShowGuideModal] = useState(false);
+  const [showHopeModal, setShowHopeModal] = useState(false);
 
   // SOS & Location State
   const [isLocating, setIsLocating] = useState(false);
@@ -345,6 +347,29 @@ export const PublicSubmit: React.FC = () => {
             </button>
           </div>
 
+          {/* Hope banner button */}
+          <button
+            type="button"
+            onClick={() => setShowHopeModal(true)}
+            className="w-full flex items-center justify-between p-3 bg-gradient-to-r from-pink-50 via-rose-50 to-amber-50 dark:from-gray-800 dark:to-gray-800 border border-pink-200/80 dark:border-pink-900/40 rounded-xl text-left hover:opacity-95 transition"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-lg bg-pink-100 dark:bg-pink-950/60 text-pink-600 dark:text-pink-400">
+                <Heart className="w-4 h-4 fill-pink-500/20" />
+              </div>
+              <div>
+                <div className="font-bold text-xs text-gray-900 dark:text-white flex items-center gap-1.5">
+                  微光与希望 · 心理平复与互助站
+                  <span className="text-[10px] text-amber-700 dark:text-amber-300 font-serif">བཀྲ་ཤིས་བདེ་ལེགས</span>
+                </div>
+                <div className="text-[10px] text-gray-500 dark:text-gray-400">4-7-8呼吸平复、72h搜救节奏、爱的时空胶囊</div>
+              </div>
+            </div>
+            <span className="text-[11px] font-bold text-pink-600 dark:text-pink-400 bg-pink-100/60 dark:bg-pink-950/60 px-2 py-1 rounded-lg">
+              开启
+            </span>
+          </button>
+
           <div className="grid grid-cols-2 gap-2 pt-1 border-t border-gray-100 dark:border-gray-700/50">
             <button
               type="button"
@@ -567,6 +592,10 @@ export const PublicSubmit: React.FC = () => {
       <DisasterFieldGuideModal
         isOpen={showGuideModal}
         onClose={() => setShowGuideModal(false)}
+      />
+      <BeaconOfHopeModal
+        isOpen={showHopeModal}
+        onClose={() => setShowHopeModal(false)}
       />
     </div>
   );

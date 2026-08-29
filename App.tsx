@@ -13,13 +13,15 @@ import { EmergencyBroadcastModal } from './components/EmergencyBroadcastModal';
 import { SafetyCheckinModal } from './components/SafetyCheckinModal';
 import { EmergencyBeaconModal } from './components/EmergencyBeaconModal';
 import { DisasterFieldGuideModal } from './components/DisasterFieldGuideModal';
-import { Radio, ShieldCheck, AlertOctagon, BookOpen } from 'lucide-react';
+import { BeaconOfHopeModal } from './components/BeaconOfHopeModal';
+import { Radio, ShieldCheck, AlertOctagon, BookOpen, Heart } from 'lucide-react';
 
 const App: React.FC = () => {
   const [showBroadcastModal, setShowBroadcastModal] = useState(false);
   const [showCheckinModal, setShowCheckinModal] = useState(false);
   const [showBeaconModal, setShowBeaconModal] = useState(false);
   const [showGuideModal, setShowGuideModal] = useState(false);
+  const [showHopeModal, setShowHopeModal] = useState(false);
 
   return (
     <HashRouter>
@@ -65,11 +67,27 @@ const App: React.FC = () => {
             <BookOpen className="w-3.5 h-3.5" />
             <span>避险手册</span>
           </button>
+          <span className="text-gray-300 dark:text-gray-600">|</span>
+          <button
+            onClick={() => setShowHopeModal(true)}
+            className="flex items-center gap-1 text-pink-600 dark:text-pink-400 font-bold hover:underline px-1.5 py-0.5 rounded hover:bg-pink-50 dark:hover:bg-pink-950/40"
+            title="4-7-8呼吸平复、72h救援时间线、临时自治角色与爱的时空胶囊"
+          >
+            <Heart className="w-3.5 h-3.5 fill-pink-500/20" />
+            <span>微光与希望</span>
+          </button>
         </div>
       </div>
 
       {/* Floating Emergency Action on Mobile Screens */}
       <div className="sm:hidden fixed bottom-4 right-4 z-40 flex flex-col gap-2">
+        <button
+          onClick={() => setShowHopeModal(true)}
+          className="p-2.5 bg-gradient-to-br from-amber-500 to-pink-600 text-white rounded-full shadow-lg flex items-center justify-center"
+          title="微光与希望"
+        >
+          <Heart className="w-5 h-5 fill-white" />
+        </button>
         <button
           onClick={() => setShowBroadcastModal(true)}
           className="p-3 bg-red-600 text-white rounded-full shadow-xl flex items-center justify-center animate-pulse"
@@ -95,6 +113,10 @@ const App: React.FC = () => {
       <DisasterFieldGuideModal
         isOpen={showGuideModal}
         onClose={() => setShowGuideModal(false)}
+      />
+      <BeaconOfHopeModal
+        isOpen={showHopeModal}
+        onClose={() => setShowHopeModal(false)}
       />
 
       {/* PWA Components - Global */}
