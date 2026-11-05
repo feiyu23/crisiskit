@@ -3,7 +3,25 @@ import { Link } from 'react-router-dom';
 import { storageService } from '../services/storage';
 import { Incident, IncidentResponse } from '../types';
 import { Button } from '../components/Button';
-import { AlertTriangle, Plus, ArrowRight, BookOpen, Download, Upload, Radio, ShieldCheck, AlertOctagon, HeartHandshake, Mountain } from 'lucide-react';
+import { 
+  AlertTriangle, 
+  Plus, 
+  ArrowRight, 
+  BookOpen, 
+  Download, 
+  Upload, 
+  Radio, 
+  ShieldCheck, 
+  AlertOctagon, 
+  HeartHandshake, 
+  Mountain, 
+  FileText, 
+  Heart, 
+  Sparkles, 
+  ChevronDown, 
+  ExternalLink,
+  ShieldAlert
+} from 'lucide-react';
 import { exportAllDataJSON, importDataJSON } from '../utils/dataPortability';
 import { EmergencyBroadcastModal } from '../components/EmergencyBroadcastModal';
 import { SafetyCheckinModal } from '../components/SafetyCheckinModal';
@@ -38,10 +56,7 @@ export const Home: React.FC = () => {
   const handleExportAll = async () => {
     setIsExporting(true);
     try {
-      // Get all incidents
       const incidents = await storageService.getIncidents();
-
-      // Get all responses for all incidents
       const responsesPromises = incidents.map(inc => storageService.getResponses(inc.id));
       const responsesArrays = await Promise.all(responsesPromises);
       const allResponses = responsesArrays.flat();
@@ -67,20 +82,17 @@ export const Home: React.FC = () => {
     try {
       const { incidents: importedIncidents, responses: importedResponses } = await importDataJSON(file);
 
-      // Confirm before overwriting
-      const confirmMsg = `This will import ${importedIncidents.length} incidents and ${importedResponses.length} responses. This will MERGE with existing data. Continue?`;
+      const confirmMsg = `This will import ${importedIncidents.length} incidents and ${importedResponses.length} responses. Continue?`;
       if (!confirm(confirmMsg)) {
         setIsImporting(false);
         return;
       }
 
-      // Import incidents
       const existingIncidents = await storageService.getIncidents();
       const existingIds = new Set(existingIncidents.map(i => i.id));
 
       for (const incident of importedIncidents) {
         if (!existingIds.has(incident.id)) {
-          // Create new incident by directly setting localStorage
           localStorage.setItem(
             'crisiskit_incidents',
             JSON.stringify([...existingIncidents, incident])
@@ -89,7 +101,6 @@ export const Home: React.FC = () => {
         }
       }
 
-      // Import responses
       const allExistingResponses: IncidentResponse[] = [];
       for (const incident of existingIncidents) {
         const responses = await storageService.getResponses(incident.id);
@@ -106,8 +117,8 @@ export const Home: React.FC = () => {
         );
       }
 
-      alert(`Successfully imported ${importedIncidents.length} incidents and ${newResponses.length} new responses!`);
-      loadIncidents(); // Reload
+      alert(`Successfully imported ${importedIncidents.length} incidents and ${newResponses.length} responses!`);
+      loadIncidents();
     } catch (error) {
       console.error('Import failed:', error);
       alert('Failed to import data. Please check the file format.');
@@ -118,250 +129,306 @@ export const Home: React.FC = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-      <div className="text-center mb-12">
-        <div className="mx-auto h-12 w-12 text-primary-600 flex items-center justify-center rounded-full bg-primary-100 mb-4">
-          <AlertTriangle size={24} />
+    <div className="max-w-4xl mx-auto pt-16 sm:pt-20 pb-28 sm:pb-16 px-4 sm:px-6 lg:px-8">
+      {/* Hero Header */}
+      <div className="text-center mb-8 sm:mb-10">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 dark:bg-red-950/70 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs font-bold mb-3 shadow-sm">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+          </span>
+          西藏-尼泊尔极境离线求生 · 全天候生命线
+          <span className="font-serif text-[11px] text-amber-700 dark:text-amber-300">བཀྲ་ཤིས་བདེ་ལེགས</span>
         </div>
-        <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl mb-4">
-          CrisisKit Lite
+        
+        <h1 className="text-3xl sm:text-5xl font-black text-gray-900 dark:text-white tracking-tight mb-3">
+          Sparks Beacon · 星火应急信标
         </h1>
-        <p className="text-lg text-gray-500 max-w-xl mx-auto">
-          10-second crisis data collection with AI triage.<br />
-          Share a link. Collect needs. Export to Google Sheets.
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
+          纯公益防灾求生站。专为暴雨、山体滑坡、泥石流、断网断电、高寒失温的极端场景打造。
+          <br className="hidden sm:inline" />
+          <strong className="text-red-600 dark:text-red-400 font-semibold">支持完全离线与零流量运行</strong>。请保持镇定、保存体温，微光虽小，星火为你守候。
         </p>
       </div>
 
-      {/* Highland Mudslide & Extreme Disaster Survival Center */}
-      <div className="mb-10 p-5 rounded-2xl border border-red-200 dark:border-red-900/50 bg-gradient-to-br from-red-50/70 via-white to-amber-50/50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 mb-4 border-b border-red-100 dark:border-gray-800">
-          <div className="flex items-center gap-2">
-            <div className="p-2 bg-red-600 text-white rounded-xl shadow-md">
-              <Mountain className="w-5 h-5" />
-            </div>
-            <div>
-              <h2 className="font-extrabold text-gray-900 dark:text-white text-base flex items-center gap-2">
-                高山泥石流与极端孤岛应急自救中心
-                <span className="text-[10px] bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300 font-bold px-2 py-0.5 rounded-full">
-                  西藏-尼泊尔泥石流应急特别版
-                </span>
-              </h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                针对断网断电、高寒失温、道路冲毁与亲友失联场景的离线生命线工具
-              </p>
-            </div>
-          </div>
+      {/* 🔴 Section 1: The 4 Primary Panic-Proof Lifeline Actions */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-3 px-1">
+          <h2 className="text-xs font-black uppercase tracking-wider text-red-600 dark:text-red-400 flex items-center gap-1.5">
+            <ShieldAlert className="w-4 h-4" />
+            现场遇险 · 紧急自救通道（点击即用）
+          </h2>
+          <span className="text-[11px] text-gray-400 dark:text-gray-500 font-mono">
+            零学习成本 · 离线可用
+          </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          {/* Action 1: Emergency SMS Broadcast */}
           <button
             onClick={() => setShowBroadcastModal(true)}
-            className="flex flex-col p-3.5 rounded-xl border border-red-200 dark:border-red-800/60 bg-white dark:bg-gray-800/80 hover:border-red-400 hover:shadow-md transition text-left group"
+            className="flex flex-col justify-between p-5 rounded-2xl bg-gradient-to-br from-red-600 to-rose-700 hover:from-red-700 hover:to-rose-800 text-white shadow-lg hover:shadow-xl active:scale-[0.99] transition text-left group min-h-[130px] border border-red-500/30"
           >
-            <div className="flex items-center justify-between mb-2">
-              <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 group-hover:scale-110 transition-transform">
-                <Radio className="w-4 h-4" />
+            <div className="flex items-start justify-between w-full">
+              <div className="p-2.5 rounded-xl bg-white/20 backdrop-blur-sm">
+                <Radio className="w-6 h-6 text-white animate-pulse" />
               </div>
-              <span className="text-[10px] font-bold text-red-600 dark:text-red-400">零流量/短信</span>
-            </div>
-            <div className="font-bold text-sm text-gray-900 dark:text-white">亲友紧急联络</div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">一键生成GPS短报文直发短信/卫星</div>
-          </button>
-
-          <button
-            onClick={() => setShowCheckinModal(true)}
-            className="flex flex-col p-3.5 rounded-xl border border-green-200 dark:border-green-800/60 bg-white dark:bg-gray-800/80 hover:border-green-400 hover:shadow-md transition text-left group"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform">
-                <HeartHandshake className="w-4 h-4" />
-              </div>
-              <span className="text-[10px] font-bold text-green-600 dark:text-green-400">离线名册</span>
-            </div>
-            <div className="font-bold text-sm text-gray-900 dark:text-white">报平安 & 寻亲站</div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">安置点人员登记与姓名尾号模糊快查</div>
-          </button>
-
-          <button
-            onClick={() => setShowBeaconModal(true)}
-            className="flex flex-col p-3.5 rounded-xl border border-orange-200 dark:border-orange-800/60 bg-white dark:bg-gray-800/80 hover:border-orange-400 hover:shadow-md transition text-left group"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 group-hover:scale-110 transition-transform">
-                <AlertOctagon className="w-4 h-4" />
-              </div>
-              <span className="text-[10px] font-bold text-orange-600 dark:text-orange-400">视听呼叫</span>
-            </div>
-            <div className="font-bold text-sm text-gray-900 dark:text-white">声光救援信标</div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">全屏SOS频闪与3.1kHz穿透求生哨</div>
-          </button>
-
-          <button
-            onClick={() => setShowGuideModal(true)}
-            className="flex flex-col p-3.5 rounded-xl border border-amber-200 dark:border-amber-800/60 bg-white dark:bg-gray-800/80 hover:border-amber-400 hover:shadow-md transition text-left group"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 group-hover:scale-110 transition-transform">
-                <BookOpen className="w-4 h-4" />
-              </div>
-              <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400">离线自救</span>
-            </div>
-            <div className="font-bold text-sm text-gray-900 dark:text-white">泥石流避险手册</div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">垂直两侧逃生、防失温与水净化</div>
-          </button>
-        </div>
-
-        {/* Beacon of Hope banner */}
-        <div className="mt-3 p-3.5 rounded-xl border border-pink-200/70 dark:border-pink-900/40 bg-gradient-to-r from-pink-50/80 via-rose-50/50 to-amber-50/60 dark:from-gray-800 dark:to-gray-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-pink-100 dark:bg-pink-950/60 text-pink-600 dark:text-pink-400 shrink-0">
-              <HeartHandshake className="w-5 h-5" />
+              <span className="text-[11px] font-bold bg-white/25 px-2.5 py-1 rounded-full text-white">
+                零流量 / 卫星短信
+              </span>
             </div>
             <div>
-              <div className="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
-                微光与希望 · 心理平复与互助自治站
-                <span className="text-[10px] text-amber-700 dark:text-amber-300 font-serif bg-amber-100 dark:bg-amber-900/40 px-1.5 py-0.5 rounded">
-                  བཀྲ་ཤིས་བདེ་ལེགས
-                </span>
+              <div className="text-xl font-black tracking-tight text-white flex items-center gap-1">
+                一键短信/卫星呼救
+                <ArrowRight className="w-4 h-4 opacity-70 group-hover:translate-x-1 transition-transform" />
               </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                4-7-8 呼吸平复光圈、72小时搜救时间线、临时避难自治角色、写给至亲的时空胶囊
+              <div className="text-xs text-red-100 mt-1 line-clamp-2">
+                自动提取高精度GPS、海拔与伤情，直接调起手机短信发送给亲友或救援队
               </div>
             </div>
+          </button>
+
+          {/* Action 2: Emergency Visual & Audio Beacon */}
+          <button
+            onClick={() => setShowBeaconModal(true)}
+            className="flex flex-col justify-between p-5 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl active:scale-[0.99] transition text-left group min-h-[130px] border border-amber-400/30"
+          >
+            <div className="flex items-start justify-between w-full">
+              <div className="p-2.5 rounded-xl bg-white/20 backdrop-blur-sm">
+                <AlertOctagon className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-[11px] font-bold bg-white/25 px-2.5 py-1 rounded-full text-white">
+                夜间 / 浓雾穿透
+              </span>
+            </div>
+            <div>
+              <div className="text-xl font-black tracking-tight text-white flex items-center gap-1">
+                声光救援信标
+                <ArrowRight className="w-4 h-4 opacity-70 group-hover:translate-x-1 transition-transform" />
+              </div>
+              <div className="text-xs text-amber-100 mt-1 line-clamp-2">
+                屏幕全屏摩斯 SOS 强光频闪 + 3.1kHz 穿透性高频求生哨，引导搜救分队定位
+              </div>
+            </div>
+          </button>
+
+          {/* Action 3: Direct SOS Intake Form (Works fully offline!) */}
+          <Link
+            to="/submit"
+            className="flex flex-col justify-between p-5 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white shadow-lg hover:shadow-xl active:scale-[0.99] transition text-left group min-h-[130px] border border-blue-500/30"
+          >
+            <div className="flex items-start justify-between w-full">
+              <div className="p-2.5 rounded-xl bg-white/20 backdrop-blur-sm">
+                <FileText className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-[11px] font-bold bg-white/25 px-2.5 py-1 rounded-full text-white">
+                断网自动排队
+              </span>
+            </div>
+            <div>
+              <div className="text-xl font-black tracking-tight text-white flex items-center gap-1">
+                现场求助与伤情直报
+                <ArrowRight className="w-4 h-4 opacity-70 group-hover:translate-x-1 transition-transform" />
+              </div>
+              <div className="text-xs text-blue-100 mt-1 line-clamp-2">
+                登记受困位置、人数、受困伤情与急缺物资，离线也能安全记录并生成核验二维码
+              </div>
+            </div>
+          </Link>
+
+          {/* Action 4: Safety Check-in & Reunification */}
+          <button
+            onClick={() => setShowCheckinModal(true)}
+            className="flex flex-col justify-between p-5 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white shadow-lg hover:shadow-xl active:scale-[0.99] transition text-left group min-h-[130px] border border-emerald-500/30"
+          >
+            <div className="flex items-start justify-between w-full">
+              <div className="p-2.5 rounded-xl bg-white/20 backdrop-blur-sm">
+                <HeartHandshake className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-[11px] font-bold bg-white/25 px-2.5 py-1 rounded-full text-white">
+                避难所查人
+              </span>
+            </div>
+            <div>
+              <div className="text-xl font-black tracking-tight text-white flex items-center gap-1">
+                报平安 & 寻亲名册
+                <ArrowRight className="w-4 h-4 opacity-70 group-hover:translate-x-1 transition-transform" />
+              </div>
+              <div className="text-xs text-emerald-100 mt-1 line-clamp-2">
+                查寻失联亲友是否在避难所名单（输入姓名/手机尾号快查），或登记自己脱险平安
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* 🌸 Section 2: Mental First Aid & Survival Field Knowledge */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-10">
+        {/* Beacon of Hope */}
+        <div className="p-4 sm:p-5 rounded-2xl border border-pink-200 dark:border-pink-900/50 bg-gradient-to-br from-pink-50/80 via-rose-50/40 to-amber-50/50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 shadow-sm flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-pink-100 dark:bg-pink-950/60 text-pink-600 dark:text-pink-400 rounded-xl">
+                  <Heart className="w-5 h-5 fill-pink-500/20" />
+                </div>
+                <h3 className="font-extrabold text-sm sm:text-base text-gray-900 dark:text-white">
+                  微光与希望 · 心理平复与互助站
+                </h3>
+              </div>
+              <span className="text-[10px] text-amber-700 dark:text-amber-300 font-serif bg-amber-100 dark:bg-amber-900/40 px-1.5 py-0.5 rounded">
+                བཀྲ་ཤིས་བདེ་ལེགས
+              </span>
+            </div>
+            <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+              恐慌时跟随 <strong>4-7-8 呼吸光圈</strong> 平抑心跳与过度换气；了解 <strong>72小时科学搜救推进时间线</strong> 破除绝望；写下封存于本地的 <strong>爱的时空胶囊</strong>。
+            </p>
           </div>
           <button
             onClick={() => setShowHopeModal(true)}
-            className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white font-bold text-xs rounded-xl shadow transition whitespace-nowrap"
+            className="w-full py-2.5 px-4 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white font-bold text-xs rounded-xl shadow transition text-center"
           >
-            开启微光守护
+            开启微光守护与呼吸平复
+          </button>
+        </div>
+
+        {/* Mudslide Field Survival Guide */}
+        <div className="p-4 sm:p-5 rounded-2xl border border-amber-200 dark:border-amber-900/50 bg-gradient-to-br from-amber-50/80 via-yellow-50/30 to-orange-50/40 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 shadow-sm flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 rounded-xl">
+                  <BookOpen className="w-5 h-5" />
+                </div>
+                <h3 className="font-extrabold text-sm sm:text-base text-gray-900 dark:text-white">
+                  泥石流垂直逃生与高原自救
+                </h3>
+              </div>
+              <span className="text-[10px] text-amber-700 dark:text-amber-300 font-bold bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded-full">
+                离线图解
+              </span>
+            </div>
+            <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+              <strong>绝不顺着山沟跑，往垂直两侧高地跑</strong>；警惕上游断流与轰鸣（堰塞湖溃决前兆）；湿冷环境下<strong>隔绝地面防失温四步法</strong>与自制饮水净化。
+            </p>
+          </div>
+          <button
+            onClick={() => setShowGuideModal(true)}
+            className="w-full py-2.5 px-4 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold text-xs rounded-xl shadow transition text-center"
+          >
+            查看避险手册与防失温指南
           </button>
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Active Incidents</h2>
-        <div className="flex gap-2 flex-wrap">
-          <Button onClick={handleExportAll} variant="secondary" disabled={isExporting || incidents.length === 0}>
-            <Download className="mr-2 h-4 w-4" />
-            {isExporting ? 'Exporting...' : 'Export Backup'}
-          </Button>
-          <Button onClick={handleImportClick} variant="secondary" disabled={isImporting}>
-            <Upload className="mr-2 h-4 w-4" />
-            {isImporting ? 'Importing...' : 'Import Backup'}
-          </Button>
-          <Link to="/create">
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              New Incident
-            </Button>
-          </Link>
-        </div>
-      </div>
-
-      {/* Hidden file input for import */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".json"
-        onChange={handleFileSelect}
-        className="hidden"
-      />
-
-      {loading ? (
-        <div className="space-y-4">
-          {[1, 2].map((i) => (
-            <div key={i} className="h-24 bg-gray-100 rounded-xl animate-pulse" />
-          ))}
-        </div>
-      ) : incidents.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-xl border-2 border-dashed border-gray-300 mb-12">
-          <p className="text-gray-500 mb-4">No active incidents found.</p>
-          <Link to="/create">
-            <Button variant="secondary">Create your first form</Button>
-          </Link>
-        </div>
-      ) : (
-        <div className="space-y-4 mb-16">
-          {incidents.map((incident) => (
-            <Link 
-              key={incident.id} 
-              to={`/incident/${incident.id}`}
-              className="block group"
-            >
-              <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">
-                      {incident.title}
-                    </h3>
-                    <p className="text-gray-500 mt-1 line-clamp-2">{incident.description}</p>
-                    <p className="text-xs text-gray-400 mt-3">
-                      Created {new Date(incident.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <ArrowRight className="text-gray-300 group-hover:text-primary-500 transition-colors" />
-                </div>
+      {/* ⚙️ Section 3: Responders, Volunteers & Disaster Coordination Workspace */}
+      <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-800">
+        <details className="group rounded-2xl bg-white dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/80 overflow-hidden shadow-sm transition">
+          <summary className="flex items-center justify-between p-4 sm:p-5 cursor-pointer select-none hover:bg-gray-50 dark:hover:bg-gray-750 transition">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-xl">
+                <Mountain className="w-5 h-5" />
               </div>
-            </Link>
-          ))}
-        </div>
-      )}
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  救援队与应急协同工作台
+                  <span className="text-[10px] bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-bold px-2 py-0.5 rounded">
+                    协调指挥 / 备份管理
+                  </span>
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  面向现场救援协调者、志愿者团队及表格协同（点击展开/收起）
+                </p>
+              </div>
+            </div>
+            <ChevronDown className="w-5 h-5 text-gray-400 group-open:rotate-180 transition-transform" />
+          </summary>
 
-      {/* About / README Section */}
-      <div className="border-t border-gray-200 pt-12">
-        <div className="prose prose-blue max-w-none text-gray-600">
-          <div className="flex justify-between items-baseline mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-              About CrisisKit Lite <span className="ml-2 text-xl">🚨</span>
-            </h2>
-            <Link to="/design" className="text-sm font-medium text-primary-600 hover:text-primary-800 flex items-center">
-              <BookOpen className="w-4 h-4 mr-1" />
-              Read Design Philosophy
-            </Link>
-          </div>
-          
-          <p className="text-lg leading-relaxed mb-6">
-            <strong>CrisisKit is the bridge between affected people and volunteer teams:</strong>
-          </p>
-
-          <div className="bg-gray-50 border-2 border-gray-200 p-6 rounded-lg mb-8 text-center font-mono text-sm">
-            <p className="text-gray-700">
-              Affected People → <strong className="text-primary-600">CrisisKit Form</strong> → <strong className="text-primary-600">AI Triage</strong> → Google Sheets → Volunteers
-            </p>
-          </div>
-
-          <div className="bg-primary-50 border-l-4 border-primary-500 p-4 rounded-r-lg mb-8">
-            <p className="font-semibold text-gray-900 mb-2">Why Not Just Use Google Forms + Sheets?</p>
-            <p className="text-gray-700 mb-3">
-              <strong>Google Forms</strong> take 15+ minutes to set up, have poor mobile UX, no AI triage, and no duplicate detection.
-            </p>
-            <p className="text-gray-700">
-              <strong>CrisisKit</strong> takes 10 seconds to create, is mobile-optimized with SOS location button,
-              auto-classifies urgency with AI, detects duplicates, and exports directly to Google Sheets with one click.
-            </p>
-          </div>
-
-          <p className="mb-4">
-            <strong>What CrisisKit Does:</strong>
-          </p>
-          <ul className="list-disc pl-5 space-y-2 mb-8">
-             <li><strong>10-Second Form Creation</strong> - No account, no setup, just create and share</li>
-             <li><strong>Mobile-First Design</strong> - Large buttons, SOS location button, works on any phone</li>
-             <li><strong>AI-Powered Triage</strong> - Gemini AI classifies Critical/Moderate/Low urgency automatically</li>
-             <li><strong>Visual Statistics</strong> - See urgency distribution, region heatmaps, and timeline trends at a glance</li>
-             <li><strong>Smart Duplicate Detection</strong> - Prevents spam, tracks updates from same contact</li>
-             <li><strong>Auto-Sync to Google Sheets</strong> - Real-time webhook sync or one-click export for volunteer collaboration</li>
-             <li><strong>Region/District Selection</strong> - Pre-configured dropdowns for fast location tracking</li>
-          </ul>
-
-          <div className="text-center mt-8">
-            <Link to="/design">
-                <Button variant="secondary" className="w-full sm:w-auto">
-                    Why we built this: The Story of Taipo Fire &rarr;
+          <div className="p-5 border-t border-gray-100 dark:border-gray-700/60 bg-gray-50/50 dark:bg-gray-900/50 space-y-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <div>
+                <h4 className="text-sm font-bold text-gray-900 dark:text-white">活跃救援通道与事件看板</h4>
+                <p className="text-xs text-gray-500">点击任意通道即可进入指挥看板、查看求助热力与AI分诊</p>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                <Button onClick={handleExportAll} variant="secondary" disabled={isExporting || incidents.length === 0}>
+                  <Download className="mr-1.5 h-3.5 w-3.5" />
+                  {isExporting ? '导出中...' : '导出全部备份'}
                 </Button>
-            </Link>
+                <Button onClick={handleImportClick} variant="secondary" disabled={isImporting}>
+                  <Upload className="mr-1.5 h-3.5 w-3.5" />
+                  {isImporting ? '导入中...' : '导入数据合并'}
+                </Button>
+                <Link to="/create">
+                  <Button>
+                    <Plus className="mr-1.5 h-3.5 w-3.5" />
+                    新建救灾专案
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            {/* Hidden file input for import */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+
+            {loading ? (
+              <div className="space-y-3">
+                {[1, 2].map((i) => (
+                  <div key={i} className="h-16 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
+                ))}
+              </div>
+            ) : incidents.length === 0 ? (
+              <div className="text-center py-8 bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700">
+                <p className="text-xs text-gray-500 mb-3">暂无其他特定救援专案</p>
+                <Link to="/create">
+                  <Button variant="secondary">创建第一个救援表单</Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {incidents.map((incident) => (
+                  <Link 
+                    key={incident.id} 
+                    to={`/incident/${incident.id}`}
+                    className="block group"
+                  >
+                    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:shadow-md transition">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h4 className="text-sm font-bold text-gray-900 dark:text-white group-hover:text-primary-600 transition">
+                            {incident.title}
+                          </h4>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">{incident.description}</p>
+                          <p className="text-[10px] text-gray-400 mt-2 font-mono">
+                            创建时间：{new Date(incident.createdAt).toLocaleString()} · ID: {incident.id.slice(0, 8)}
+                          </p>
+                        </div>
+                        <ArrowRight className="text-gray-300 group-hover:text-primary-500 transition-colors w-4 h-4 shrink-0" />
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {/* Architecture / Manifesto footnote */}
+            <div className="pt-4 border-t border-gray-200 dark:border-gray-700/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-xs text-gray-500">
+              <div>
+                Sparks Beacon 结合了 CrisisKit Lite 敏捷架构与离线 PWA 引擎。
+              </div>
+              <Link to="/design" className="text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1 font-semibold">
+                <BookOpen className="w-3.5 h-3.5" />
+                查阅系统设计哲学 (Design Philosophy)
+              </Link>
+            </div>
           </div>
-        </div>
+        </details>
       </div>
 
       {/* Survival Modals */}

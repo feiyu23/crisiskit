@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { storageService } from '../services/storage';
 import { offlineQueue } from '../services/offlineQueue';
+import { DEFAULT_PUBLIC_EMERGENCY_INCIDENT } from '../services/InMemoryRepo';
 import { Incident } from '../types';
 import { Button } from '../components/Button';
 import { Input, TextArea } from '../components/Input';
 import { ImageUpload } from '../components/ImageUpload';
-import { CheckCircle, MapPin, ShieldAlert, X, AlertTriangle, Wifi, WifiOff, MessageSquare, QrCode } from 'lucide-react';
+import { CheckCircle, MapPin, ShieldAlert, X, AlertTriangle, Wifi, WifiOff, MessageSquare, QrCode, ArrowLeft } from 'lucide-react';
 import { VoiceRecorder } from '../components/VoiceRecorder';
 import { QRCodeModal } from '../components/QRCodeModal';
 import { EmergencyBroadcastModal } from '../components/EmergencyBroadcastModal';
@@ -18,6 +19,7 @@ import { Radio, HeartHandshake, AlertOctagon, BookOpen, Heart } from 'lucide-rea
 
 export const PublicSubmit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const effectiveId = id || DEFAULT_PUBLIC_EMERGENCY_INCIDENT.id;
   const [incident, setIncident] = useState<Incident | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
@@ -59,9 +61,13 @@ export const PublicSubmit: React.FC = () => {
 
   useEffect(() => {
     const load = async () => {
-      if (!id) return;
+      if (!id) {
+        setIncident(DEFAULT_PUBLIC_EMERGENCY_INCIDENT);
+        setLoading(false);
+        return;
+      }
       const data = await storageService.getIncidentById(id);
-      setIncident(data || null);
+      setIncident(data || DEFAULT_PUBLIC_EMERGENCY_INCIDENT);
       setLoading(false);
     };
     load();
@@ -120,10 +126,10 @@ export const PublicSubmit: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!id || !formData.name || !formData.needs) return;
+    if (!formData.name || !formData.needs) return;
 
     const submissionData = {
-      incidentId: id,
+      incidentId: effectiveId,
       name: formData.name,
       contact: formData.contact,
       needs: formData.needs,
@@ -280,6 +286,15 @@ export const PublicSubmit: React.FC = () => {
       )}
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="mb-4 text-left">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white bg-white dark:bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 text-red-500" />
+            返回星火信标主页 (Home)
+          </Link>
+        </div>
         <h2 className="text-center text-3xl font-extrabold text-gray-900">{incident.title}</h2>
         <p className="mt-2 text-center text-sm text-gray-600 max-w-sm mx-auto">
           {incident.description}
