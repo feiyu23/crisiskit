@@ -55,3 +55,19 @@ export interface SafetyCheckin {
   note?: string;
   timestamp: number;
 }
+
+export type MutualAidType = 'offer' | 'request';
+export type MutualAidCategory = 'power' | 'medicine' | 'water' | 'food' | 'warmth' | 'baby' | 'tools' | 'other';
+
+export interface MutualAidItem {
+  id: string;
+  type: MutualAidType; // 'offer' = I can share / 'request' = I need help
+  category: MutualAidCategory;
+  title: string;
+  description: string;
+  contact: string; // Phone / Radio / Tent / Room #
+  location?: string;
+  isUrgent?: boolean;
+  status: 'active' | 'fulfilled';
+  timestamp: number;
+}
