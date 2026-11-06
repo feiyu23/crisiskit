@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from './Button';
 import { X, Send, Copy, Check, Phone, MapPin, Radio, ShieldCheck, AlertOctagon, HeartHandshake, UserPlus, Trash2 } from 'lucide-react';
+import { getLang } from '../utils/i18n';
 
 interface EmergencyBroadcastModalProps {
   isOpen: boolean;
@@ -17,6 +18,9 @@ interface EmergencyContact {
 const DEFAULT_CONTACTS_KEY = 'crisiskit_emergency_contacts';
 
 export const EmergencyBroadcastModal: React.FC<EmergencyBroadcastModalProps> = ({ isOpen, onClose }) => {
+  const lang = getLang();
+  const isEn = lang === 'en';
+
   // Contacts state
   const [contacts, setContacts] = useState<EmergencyContact[]>(() => {
     try {
@@ -26,8 +30,8 @@ export const EmergencyBroadcastModal: React.FC<EmergencyBroadcastModalProps> = (
       console.error(e);
     }
     return [
-      { id: '1', name: '家人/亲属', phone: '', relation: 'Family' },
-      { id: '2', name: '紧急救援 / 领事保护', phone: '110', relation: 'Rescue' }
+      { id: '1', name: isEn ? 'Family / Relative' : '家人/亲属', phone: '', relation: 'Family' },
+      { id: '2', name: isEn ? 'Emergency Services' : '紧急救援 / 领事保护', phone: '112', relation: 'Rescue' }
     ];
   });
 
@@ -117,21 +121,31 @@ export const EmergencyBroadcastModal: React.FC<EmergencyBroadcastModalProps> = (
   const generateMessage = (): string => {
     const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const locationStr = coords 
-      ? `[${coords.lat},${coords.lng}${coords.alt ? ` 海拔${coords.alt}m` : ''} 误差±${coords.acc || 0}m]` 
-      : '[GPS未知]';
+      ? `[${coords.lat},${coords.lng}${coords.alt ? ` alt:${coords.alt}m` : ''} ±${coords.acc || 0}m]` 
+      : '[GPS Unknown]';
 
-    const who = userName.trim() ? userName.trim() : '我';
+    const who = userName.trim() ? userName.trim() : (isEn ? 'Me' : '我');
     
+    if (isEn) {
+      if (statusType === 'safe') {
+        return `[SAFE STATUS] I am ${who}. Confirmed SAFE at ${timeStr}. Party of ${companions}. Loc:${locationStr}. Weak signal but safe, do not worry! [SparksBeacon]`;
+      }
+      if (statusType === 'trapped') {
+        return `[SOS TRAPPED] I am ${who}. Trapped in disaster at ${timeStr}. Party of ${companions}. Loc:${locationStr}. Need evacuation assist${extraNeeds ? ': ' + extraNeeds : ''}. Please alert emergency services! [SparksBeacon]`;
+      }
+      return `[🚨CRITICAL SOS] I am ${who}! Severe crisis, party of ${companions}, INJURIES reported! Loc:${locationStr}. URGENT medical / rescue needed${extraNeeds ? ': ' + extraNeeds : ''}! HELP! [SparksBeacon]`;
+    }
+
     if (statusType === 'safe') {
-      return `【平安报备】我是${who}，于${timeStr}确认安全。同行${companions}人。现位置${locationStr}。网络微弱但安全，勿念！`;
+      return `【平安报备】我是${who}，于${timeStr}确认安全。同行${companions}人。现位置${locationStr}。网络微弱但安全，勿念！[来自星火信标]`;
     }
 
     if (statusType === 'trapped') {
-      return `【受困求援】我是${who}，于${timeStr}受困泥石流/塌方。同行${companions}人。位置${locationStr}。急需撤离协助${extraNeeds ? '及' + extraNeeds : ''}，请代为报警！`;
+      return `【受困求援】我是${who}，于${timeStr}受困险情。同行${companions}人。位置${locationStr}。急需撤离协助${extraNeeds ? '及' + extraNeeds : ''}，请代为报警！[来自星火信标]`;
     }
 
     // critical SOS
-    return `【🚨危急SOS】我是${who}！泥石流灾情严重，同行${companions}人，有伤员！位置${locationStr}。急需直升机/担架及医疗救援${extraNeeds ? '，' + extraNeeds : ''}！救命！`;
+    return `【🚨危急SOS】我是${who}！灾情严重，同行${companions}人，有伤员！位置${locationStr}。急需医疗及紧急搜救${extraNeeds ? '，' + extraNeeds : ''}！救命！[来自星火信标]`;
   };
 
   const messageText = generateMessage();

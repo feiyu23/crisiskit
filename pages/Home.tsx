@@ -20,7 +20,9 @@ import {
   Sparkles, 
   ChevronDown, 
   ExternalLink,
-  ShieldAlert
+  ShieldAlert,
+  Backpack,
+  Globe
 } from 'lucide-react';
 import { exportAllDataJSON, importDataJSON } from '../utils/dataPortability';
 import { EmergencyBroadcastModal } from '../components/EmergencyBroadcastModal';
@@ -28,6 +30,9 @@ import { SafetyCheckinModal } from '../components/SafetyCheckinModal';
 import { EmergencyBeaconModal } from '../components/EmergencyBeaconModal';
 import { DisasterFieldGuideModal } from '../components/DisasterFieldGuideModal';
 import { BeaconOfHopeModal } from '../components/BeaconOfHopeModal';
+import { FamilyStockpileModal } from '../components/FamilyStockpileModal';
+import { CommunityMutualAidModal } from '../components/CommunityMutualAidModal';
+import { t, getLang, Language } from '../utils/i18n';
 
 export const Home: React.FC = () => {
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -36,12 +41,25 @@ export const Home: React.FC = () => {
   const [isImporting, setIsImporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Active language state
+  const [lang, setLangState] = useState<Language>(getLang());
+
+  useEffect(() => {
+    const handleLangChange = () => setLangState(getLang());
+    window.addEventListener('crisiskit_lang_change', handleLangChange);
+    return () => window.removeEventListener('crisiskit_lang_change', handleLangChange);
+  }, []);
+
+  const isEn = lang === 'en';
+
   // Survival Modals state
   const [showBroadcastModal, setShowBroadcastModal] = useState(false);
   const [showCheckinModal, setShowCheckinModal] = useState(false);
   const [showBeaconModal, setShowBeaconModal] = useState(false);
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showHopeModal, setShowHopeModal] = useState(false);
+  const [showStockpileModal, setShowStockpileModal] = useState(false);
+  const [showMutualAidModal, setShowMutualAidModal] = useState(false);
 
   useEffect(() => {
     loadIncidents();
@@ -132,22 +150,36 @@ export const Home: React.FC = () => {
     <div className="max-w-4xl mx-auto pt-16 sm:pt-20 pb-28 sm:pb-16 px-4 sm:px-6 lg:px-8">
       {/* Hero Header */}
       <div className="text-center mb-8 sm:mb-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 dark:bg-red-950/70 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs font-bold mb-3 shadow-sm">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-100 dark:bg-red-950/70 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs font-bold mb-3 shadow-sm">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
           </span>
-          西藏-尼泊尔极境离线求生 · 全天候生命线
-          <span className="font-serif text-[11px] text-amber-700 dark:text-amber-300">བཀྲ་ཤིས་བདེ་ལེགས</span>
+          {isEn 
+            ? 'Global Humanitarian Lifeline · Works 100% Offline' 
+            : '全球人道离线生命线 · 全天候离线运行'}
+          <span className="font-serif text-[11px] text-amber-700 dark:text-amber-300 hidden sm:inline">
+            བཀྲ་ཤིས་བདེ་ལེགས
+          </span>
         </div>
         
         <h1 className="text-3xl sm:text-5xl font-black text-gray-900 dark:text-white tracking-tight mb-3">
-          Sparks Beacon · 星火应急信标
+          {t('beaconTitle')}
         </h1>
         <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-          纯公益防灾求生站。专为暴雨、山体滑坡、泥石流、断网断电、高寒失温的极端场景打造。
-          <br className="hidden sm:inline" />
-          <strong className="text-red-600 dark:text-red-400 font-semibold">支持完全离线与零流量运行</strong>。请保持镇定、保存体温，微光虽小，星火为你守候。
+          {isEn ? (
+            <>
+              Pure non-profit public lifeline for <strong>Earthquakes, Volcanic eruptions, Floods, Blizzards, Mudslides, Grid outages, and Epidemics</strong>.
+              <br className="hidden sm:inline" />
+              <strong className="text-red-600 dark:text-red-400 font-semibold"> Fully functional offline & zero-data required</strong>. Stay calm and preserve warmth — hope is with you.
+            </>
+          ) : (
+            <>
+              纯公益全天候防灾生命线。专为<strong>地震、火山喷发、洪涝、风雪极寒、泥石流、断网断电孤岛与公共卫生紧急状态</strong>打造。
+              <br className="hidden sm:inline" />
+              <strong className="text-red-600 dark:text-red-400 font-semibold">支持完全离线与零流量运行</strong>。请保持镇定、保存体温，微光虽小，星火为你守候。
+            </>
+          )}
         </p>
       </div>
 
@@ -156,10 +188,10 @@ export const Home: React.FC = () => {
         <div className="flex items-center justify-between mb-3 px-1">
           <h2 className="text-xs font-black uppercase tracking-wider text-red-600 dark:text-red-400 flex items-center gap-1.5">
             <ShieldAlert className="w-4 h-4" />
-            现场遇险 · 紧急自救通道（点击即用）
+            {t('lifelineSectionTitle')}
           </h2>
           <span className="text-[11px] text-gray-400 dark:text-gray-500 font-mono">
-            零学习成本 · 离线可用
+            {t('lifelineSectionSubtitle')}
           </span>
         </div>
 
@@ -174,16 +206,16 @@ export const Home: React.FC = () => {
                 <Radio className="w-6 h-6 text-white animate-pulse" />
               </div>
               <span className="text-[11px] font-bold bg-white/25 px-2.5 py-1 rounded-full text-white">
-                零流量 / 卫星短信
+                {t('emergencySMSTag')}
               </span>
             </div>
             <div>
-              <div className="text-xl font-black tracking-tight text-white flex items-center gap-1">
-                一键短信/卫星呼救
+              <div className="text-lg sm:text-xl font-black tracking-tight text-white flex items-center justify-between">
+                <span>{t('emergencySMS')}</span>
                 <ArrowRight className="w-4 h-4 opacity-70 group-hover:translate-x-1 transition-transform" />
               </div>
               <div className="text-xs text-red-100 mt-1 line-clamp-2">
-                自动提取高精度GPS、海拔与伤情，直接调起手机短信发送给亲友或救援队
+                {t('emergencySMSDesc')}
               </div>
             </div>
           </button>
@@ -198,16 +230,16 @@ export const Home: React.FC = () => {
                 <AlertOctagon className="w-6 h-6 text-white" />
               </div>
               <span className="text-[11px] font-bold bg-white/25 px-2.5 py-1 rounded-full text-white">
-                夜间 / 浓雾穿透
+                {t('sosBeaconTag')}
               </span>
             </div>
             <div>
-              <div className="text-xl font-black tracking-tight text-white flex items-center gap-1">
-                声光救援信标
+              <div className="text-lg sm:text-xl font-black tracking-tight text-white flex items-center justify-between">
+                <span>{t('sosBeacon')}</span>
                 <ArrowRight className="w-4 h-4 opacity-70 group-hover:translate-x-1 transition-transform" />
               </div>
               <div className="text-xs text-amber-100 mt-1 line-clamp-2">
-                屏幕全屏摩斯 SOS 强光频闪 + 3.1kHz 穿透性高频求生哨，引导搜救分队定位
+                {t('sosBeaconDesc')}
               </div>
             </div>
           </button>
@@ -222,16 +254,16 @@ export const Home: React.FC = () => {
                 <FileText className="w-6 h-6 text-white" />
               </div>
               <span className="text-[11px] font-bold bg-white/25 px-2.5 py-1 rounded-full text-white">
-                断网自动排队
+                {t('directReportTag')}
               </span>
             </div>
             <div>
-              <div className="text-xl font-black tracking-tight text-white flex items-center gap-1">
-                现场求助与伤情直报
+              <div className="text-lg sm:text-xl font-black tracking-tight text-white flex items-center justify-between">
+                <span>{t('directReport')}</span>
                 <ArrowRight className="w-4 h-4 opacity-70 group-hover:translate-x-1 transition-transform" />
               </div>
               <div className="text-xs text-blue-100 mt-1 line-clamp-2">
-                登记受困位置、人数、受困伤情与急缺物资，离线也能安全记录并生成核验二维码
+                {t('directReportDesc')}
               </div>
             </div>
           </Link>
@@ -246,25 +278,85 @@ export const Home: React.FC = () => {
                 <HeartHandshake className="w-6 h-6 text-white" />
               </div>
               <span className="text-[11px] font-bold bg-white/25 px-2.5 py-1 rounded-full text-white">
-                避难所查人
+                {t('safetyCheckinTag')}
               </span>
             </div>
             <div>
-              <div className="text-xl font-black tracking-tight text-white flex items-center gap-1">
-                报平安 & 寻亲名册
+              <div className="text-lg sm:text-xl font-black tracking-tight text-white flex items-center justify-between">
+                <span>{t('safetyCheckin')}</span>
                 <ArrowRight className="w-4 h-4 opacity-70 group-hover:translate-x-1 transition-transform" />
               </div>
               <div className="text-xs text-emerald-100 mt-1 line-clamp-2">
-                查寻失联亲友是否在避难所名单（输入姓名/手机尾号快查），或登记自己脱险平安
+                {t('safetyCheckinDesc')}
               </div>
             </div>
           </button>
         </div>
       </div>
 
-      {/* 🌸 Section 2: Mental First Aid & Survival Field Knowledge */}
+      {/* 🎒 Section 2: Preparedness, Community Mutual Aid, Mental First Aid & Survival Field Guide */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-10">
-        {/* Beacon of Hope */}
+        {/* Module 1: Family Stockpile Calculator (NEW) */}
+        <div className="p-4 sm:p-5 rounded-2xl border border-emerald-200 dark:border-emerald-900/50 bg-gradient-to-br from-emerald-50/80 via-teal-50/30 to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 shadow-sm flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 rounded-xl">
+                  <Backpack className="w-5 h-5" />
+                </div>
+                <h3 className="font-extrabold text-sm sm:text-base text-gray-900 dark:text-white">
+                  {isEn ? '72h & 7-Day Family Stockpile Calculator' : '🎒 72h / 7天 极境家庭备灾计算器'}
+                </h3>
+              </div>
+              <span className="text-[10px] text-emerald-700 dark:text-emerald-300 font-bold bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 rounded-full">
+                {isEn ? 'Civil Defence Standard' : '有备无患'}
+              </span>
+            </div>
+            <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+              {isEn 
+                ? 'Based on Nordic and German civil defence guidelines: calculate exact drinking water, non-perishable high-calorie food, 14-day chronic medicines, and emergency cooking heat for your family.'
+                : '依据北欧与德国国家民防指南：测算家庭饮用水（3.5L/人/天）、免烹饪高能口粮、14天慢性病常备药、卡式炉与应急排泄物储备，支持离线打勾清点。'}
+            </p>
+          </div>
+          <button
+            onClick={() => setShowStockpileModal(true)}
+            className="w-full py-2.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs rounded-xl shadow transition text-center"
+          >
+            {isEn ? 'Open Stockpile Calculator & Checklist' : '开启家庭备灾测算与清点单'}
+          </button>
+        </div>
+
+        {/* Module 2: Community Mutual Aid Board (NEW) */}
+        <div className="p-4 sm:p-5 rounded-2xl border border-teal-200 dark:border-teal-900/50 bg-gradient-to-br from-teal-50/80 via-cyan-50/30 to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 shadow-sm flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-teal-100 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 rounded-xl">
+                  <HeartHandshake className="w-5 h-5" />
+                </div>
+                <h3 className="font-extrabold text-sm sm:text-base text-gray-900 dark:text-white">
+                  {isEn ? 'Community Mutual Aid Board' : '🤝 社区与避难所余缺互助调剂板'}
+                </h3>
+              </div>
+              <span className="text-[10px] text-teal-700 dark:text-teal-300 font-bold bg-teal-100 dark:bg-teal-950 px-2 py-0.5 rounded-full">
+                {isEn ? 'Local Barter' : '守望相助'}
+              </span>
+            </div>
+            <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+              {isEn 
+                ? 'Isolated shelter mutual exchange: share generator charging hours, extra antibiotics, or water purification tablets. Request urgent insulin, baby formula, or blankets.'
+                : '断网孤岛与安置点互通有无：“我有余/可提供”（发电机充电、多余消炎药、井水）与“我急需”（降压药、婴儿配方奶粉、保温毯），就地余缺互济。'}
+            </p>
+          </div>
+          <button
+            onClick={() => setShowMutualAidModal(true)}
+            className="w-full py-2.5 px-4 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white font-bold text-xs rounded-xl shadow transition text-center"
+          >
+            {isEn ? 'Open Community Mutual Aid Board' : '进入社区余缺互助调剂板'}
+          </button>
+        </div>
+
+        {/* Module 3: Beacon of Hope & Mental First Aid */}
         <div className="p-4 sm:p-5 rounded-2xl border border-pink-200 dark:border-pink-900/50 bg-gradient-to-br from-pink-50/80 via-rose-50/40 to-amber-50/50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 shadow-sm flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -273,7 +365,7 @@ export const Home: React.FC = () => {
                   <Heart className="w-5 h-5 fill-pink-500/20" />
                 </div>
                 <h3 className="font-extrabold text-sm sm:text-base text-gray-900 dark:text-white">
-                  微光与希望 · 心理平复与互助站
+                  {t('mentalAidTitle')}
                 </h3>
               </div>
               <span className="text-[10px] text-amber-700 dark:text-amber-300 font-serif bg-amber-100 dark:bg-amber-900/40 px-1.5 py-0.5 rounded">
@@ -281,18 +373,18 @@ export const Home: React.FC = () => {
               </span>
             </div>
             <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
-              恐慌时跟随 <strong>4-7-8 呼吸光圈</strong> 平抑心跳与过度换气；了解 <strong>72小时科学搜救推进时间线</strong> 破除绝望；写下封存于本地的 <strong>爱的时空胶囊</strong>。
+              {t('mentalAidDesc')}
             </p>
           </div>
           <button
             onClick={() => setShowHopeModal(true)}
             className="w-full py-2.5 px-4 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white font-bold text-xs rounded-xl shadow transition text-center"
           >
-            开启微光守护与呼吸平复
+            {t('mentalAidBtn')}
           </button>
         </div>
 
-        {/* Mudslide Field Survival Guide */}
+        {/* Module 4: Multi-Hazard Field Survival Guide */}
         <div className="p-4 sm:p-5 rounded-2xl border border-amber-200 dark:border-amber-900/50 bg-gradient-to-br from-amber-50/80 via-yellow-50/30 to-orange-50/40 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 shadow-sm flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -301,22 +393,24 @@ export const Home: React.FC = () => {
                   <BookOpen className="w-5 h-5" />
                 </div>
                 <h3 className="font-extrabold text-sm sm:text-base text-gray-900 dark:text-white">
-                  泥石流垂直逃生与高原自救
+                  {isEn ? 'Multi-Hazard Field Survival Guide' : '📖 极境多灾种自救避险手册'}
                 </h3>
               </div>
               <span className="text-[10px] text-amber-700 dark:text-amber-300 font-bold bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded-full">
-                离线图解
+                {isEn ? 'Earthquake · Volcano · Cold' : '离线生死指南'}
               </span>
             </div>
             <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
-              <strong>绝不顺着山沟跑，往垂直两侧高地跑</strong>；警惕上游断流与轰鸣（堰塞湖溃决前兆）；湿冷环境下<strong>隔绝地面防失温四步法</strong>与自制饮水净化。
+              {isEn 
+                ? 'Actionable survival protocols: Earthquake (Drop, Cover, Hold On), Mudslides (perpendicular escape), Volcanic ash defense, Severe cold (hypothermia prevention), and Emergency water purification.'
+                : '地震室内外避震避险、泥石流垂直高地逃生、火山灰呼吸道与眼部防护、高寒湿冷隔绝地面防失温、野外泥水三步澄清煮沸与疫情防交叉感染。'}
             </p>
           </div>
           <button
             onClick={() => setShowGuideModal(true)}
             className="w-full py-2.5 px-4 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold text-xs rounded-xl shadow transition text-center"
           >
-            查看避险手册与防失温指南
+            {isEn ? 'View Multi-Hazard Survival Guide' : '查看多灾种避险与自救指南'}
           </button>
         </div>
       </div>
@@ -331,13 +425,13 @@ export const Home: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  救援队与应急协同工作台
+                  {t('responderWorkspace')}
                   <span className="text-[10px] bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-bold px-2 py-0.5 rounded">
-                    协调指挥 / 备份管理
+                    {t('responderWorkspaceTag')}
                   </span>
                 </h3>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  面向现场救援协调者、志愿者团队及表格协同（点击展开/收起）
+                  {t('responderDesc')}
                 </p>
               </div>
             </div>
@@ -347,22 +441,22 @@ export const Home: React.FC = () => {
           <div className="p-5 border-t border-gray-100 dark:border-gray-700/60 bg-gray-50/50 dark:bg-gray-900/50 space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div>
-                <h4 className="text-sm font-bold text-gray-900 dark:text-white">活跃救援通道与事件看板</h4>
-                <p className="text-xs text-gray-500">点击任意通道即可进入指挥看板、查看求助热力与AI分诊</p>
+                <h4 className="text-sm font-bold text-gray-900 dark:text-white">{t('activeIncidents')}</h4>
+                <p className="text-xs text-gray-500">{t('activeIncidentsDesc')}</p>
               </div>
               <div className="flex gap-2 flex-wrap">
                 <Button onClick={handleExportAll} variant="secondary" disabled={isExporting || incidents.length === 0}>
                   <Download className="mr-1.5 h-3.5 w-3.5" />
-                  {isExporting ? '导出中...' : '导出全部备份'}
+                  {isExporting ? t('exporting') : t('exportAll')}
                 </Button>
                 <Button onClick={handleImportClick} variant="secondary" disabled={isImporting}>
                   <Upload className="mr-1.5 h-3.5 w-3.5" />
-                  {isImporting ? '导入中...' : '导入数据合并'}
+                  {isImporting ? t('importing') : t('importData')}
                 </Button>
                 <Link to="/create">
                   <Button>
                     <Plus className="mr-1.5 h-3.5 w-3.5" />
-                    新建救灾专案
+                    {t('newIncident')}
                   </Button>
                 </Link>
               </div>
@@ -385,9 +479,9 @@ export const Home: React.FC = () => {
               </div>
             ) : incidents.length === 0 ? (
               <div className="text-center py-8 bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700">
-                <p className="text-xs text-gray-500 mb-3">暂无其他特定救援专案</p>
+                <p className="text-xs text-gray-500 mb-3">{t('noIncidents')}</p>
                 <Link to="/create">
-                  <Button variant="secondary">创建第一个救援表单</Button>
+                  <Button variant="secondary">{t('createFirstForm')}</Button>
                 </Link>
               </div>
             ) : (
@@ -406,7 +500,7 @@ export const Home: React.FC = () => {
                           </h4>
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">{incident.description}</p>
                           <p className="text-[10px] text-gray-400 mt-2 font-mono">
-                            创建时间：{new Date(incident.createdAt).toLocaleString()} · ID: {incident.id.slice(0, 8)}
+                            {t('createdTime')}：{new Date(incident.createdAt).toLocaleString()} · {t('channelId')}: {incident.id.slice(0, 8)}
                           </p>
                         </div>
                         <ArrowRight className="text-gray-300 group-hover:text-primary-500 transition-colors w-4 h-4 shrink-0" />
@@ -420,11 +514,11 @@ export const Home: React.FC = () => {
             {/* Architecture / Manifesto footnote */}
             <div className="pt-4 border-t border-gray-200 dark:border-gray-700/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-xs text-gray-500">
               <div>
-                Sparks Beacon 结合了 CrisisKit Lite 敏捷架构与离线 PWA 引擎。
+                Sparks Beacon (Global Humanitarian Offline Edition)
               </div>
               <Link to="/design" className="text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1 font-semibold">
                 <BookOpen className="w-3.5 h-3.5" />
-                查阅系统设计哲学 (Design Philosophy)
+                {t('designPhilosophy')}
               </Link>
             </div>
           </div>
@@ -451,6 +545,14 @@ export const Home: React.FC = () => {
       <BeaconOfHopeModal
         isOpen={showHopeModal}
         onClose={() => setShowHopeModal(false)}
+      />
+      <FamilyStockpileModal
+        isOpen={showStockpileModal}
+        onClose={() => setShowStockpileModal(false)}
+      />
+      <CommunityMutualAidModal
+        isOpen={showMutualAidModal}
+        onClose={() => setShowMutualAidModal(false)}
       />
     </div>
   );
