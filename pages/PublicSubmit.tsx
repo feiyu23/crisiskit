@@ -214,26 +214,26 @@ export const PublicSubmit: React.FC = () => {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-black flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-           <div className="bg-white py-8 px-4 shadow rounded-lg sm:px-10 text-center">
+           <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow rounded-lg sm:px-10 text-center">
              {savedOffline ? (
                <>
-                 <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
-                   <WifiOff className="h-6 w-6 text-blue-600" />
+                 <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-950 mb-4">
+                   <WifiOff className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                  </div>
-                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Saved Offline</h2>
-                 <p className="text-gray-500 mb-6">
+                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Saved Offline</h2>
+                 <p className="text-gray-500 dark:text-gray-400 mb-6">
                    Your submission has been saved locally and will be automatically uploaded when you're back online.
                  </p>
                </>
              ) : (
                <>
-                 <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-success-100 mb-4">
-                   <CheckCircle className="h-6 w-6 text-success-600" />
+                 <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-success-100 dark:bg-green-950 mb-4">
+                   <CheckCircle className="h-6 w-6 text-success-600 dark:text-green-400" />
                  </div>
-                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Submission Received</h2>
-                 <p className="text-gray-500 mb-6">
+                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Submission Received</h2>
+                 <p className="text-gray-500 dark:text-gray-400 mb-6">
                    Your information has been recorded. The response team will review it shortly.
                  </p>
                </>
@@ -276,7 +276,7 @@ export const PublicSubmit: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+    <div className="min-h-screen bg-gray-50 dark:bg-black flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
       {/* Network Status Indicator */}
       {!isOnline && (
         <div className="fixed top-0 left-0 right-0 bg-orange-600 text-white px-4 py-2 text-center text-sm font-semibold z-50 flex items-center justify-center gap-2">
@@ -295,8 +295,8 @@ export const PublicSubmit: React.FC = () => {
             返回星火信标主页 (Home)
           </Link>
         </div>
-        <h2 className="text-center text-3xl font-extrabold text-gray-900">{incident.title}</h2>
-        <p className="mt-2 text-center text-sm text-gray-600 max-w-sm mx-auto">
+        <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-white">{incident.title}</h2>
+        <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-300 max-w-sm mx-auto">
           {incident.description}
         </p>
       </div>
@@ -424,7 +424,7 @@ export const PublicSubmit: React.FC = () => {
             </div>
         )}
 
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 border-t-4 border-primary-600">
+        <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10 border-t-4 border-primary-600">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <Input
               label="Your Name"

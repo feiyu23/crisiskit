@@ -38,21 +38,97 @@
   }
 }
 
+/* Dark mode typography and contrast guarantee */
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  background-color: #050811;
+  color: #f3f4f6;
+}
+
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6 {
+  color: #ffffff;
+}
+
+html.dark .text-gray-900 {
+  color: #ffffff;
+}
+
+html.dark .text-gray-800 {
+  color: #f9fafb;
+}
+
+html.dark .text-gray-700 {
+  color: #e5e7eb;
+}
+
+html.dark .text-gray-600 {
+  color: #d1d5db;
+}
+
+html.dark .text-gray-500 {
+  color: #9ca3af;
+}
+
 /* ==========================================================================
    Ultra Battery Saver Mode (Survival Mode)
-   True #000000 OLED pure black background, no shadows, no animations
+   True #000000 OLED pure black background, no shadows, no animations,
+   with high-contrast crisp text for extreme low-battery / night emergency.
    ========================================================================== */
 html.survival-mode {
   color-scheme: dark;
 }
 
-html.survival-mode body,
-html.survival-mode div,
-html.survival-mode main,
-html.survival-mode header,
-html.survival-mode footer,
-html.survival-mode nav {
+html.survival-mode body {
   background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Guarantee ultra-high contrast for headings & body in survival mode */
+html.survival-mode h1,
+html.survival-mode h2,
+html.survival-mode h3,
+html.survival-mode h4,
+html.survival-mode h5,
+html.survival-mode h6 {
+  color: #ffffff !important;
+}
+
+html.survival-mode p,
+html.survival-mode label {
+  color: #f3f4f6 !important;
+}
+
+html.survival-mode .text-gray-900,
+html.survival-mode .text-gray-800,
+html.survival-mode .text-gray-700,
+html.survival-mode .text-gray-600 {
+  color: #f3f4f6 !important;
+}
+
+html.survival-mode .text-gray-500,
+html.survival-mode .text-gray-400 {
+  color: #d1d5db !important;
+}
+
+/* Ensure card backgrounds and borders in survival mode stay OLED black and visible */
+html.survival-mode .bg-white,
+html.survival-mode .bg-gray-50,
+html.survival-mode .bg-gray-100 {
+  background-color: #050505 !important;
+}
+
+html.survival-mode .border-gray-100,
+html.survival-mode .border-gray-200,
+html.survival-mode .border-gray-300 {
+  border-color: #27272a !important;
 }
 
 html.survival-mode * {
@@ -67,6 +143,6 @@ html.survival-mode input,
 html.survival-mode textarea,
 html.survival-mode select {
   background-color: #0d0d0d !important;
-  border-color: #333333 !important;
+  border-color: #3f3f46 !important;
   color: #ffffff !important;
 }
