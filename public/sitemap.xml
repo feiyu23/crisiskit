@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <!-- Homepage -->
   <url>
     <loc>https://sos.sparkbeacon.org/</loc>
     <lastmod>2026-11-07</lastmod>
@@ -10,12 +11,72 @@
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://sos.sparkbeacon.org/" />
     <xhtml:link rel="alternate" hreflang="zh-TW" href="https://sos.sparkbeacon.org/" />
   </url>
+
+  <!-- Knowledge Base Hub -->
+  <url>
+    <loc>https://sos.sparkbeacon.org/#/articles</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- 1. Family Stockpile Guide -->
+  <url>
+    <loc>https://sos.sparkbeacon.org/#/articles/family-stockpile-guide</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- 2. Grid Outage Phone Beacon -->
+  <url>
+    <loc>https://sos.sparkbeacon.org/#/articles/grid-outage-phone-beacon</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- 3. Earthquake Survival Protocol -->
+  <url>
+    <loc>https://sos.sparkbeacon.org/#/articles/earthquake-survival-protocol</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- 4. Volcanic Ash Defense -->
+  <url>
+    <loc>https://sos.sparkbeacon.org/#/articles/volcano-ash-defense</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- 5. Hypothermia Ground Insulation -->
+  <url>
+    <loc>https://sos.sparkbeacon.org/#/articles/hypothermia-ground-insulation</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- 6. Community Shelter Mutual Aid -->
+  <url>
+    <loc>https://sos.sparkbeacon.org/#/articles/community-shelter-mutual-aid</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Submit Page -->
   <url>
     <loc>https://sos.sparkbeacon.org/#/submit</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
+  <!-- Architecture & Design Notes -->
   <url>
     <loc>https://sos.sparkbeacon.org/#/design</loc>
     <lastmod>2026-11-07</lastmod>

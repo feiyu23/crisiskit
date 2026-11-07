@@ -16,7 +16,9 @@ import { DisasterFieldGuideModal } from './components/DisasterFieldGuideModal';
 import { BeaconOfHopeModal } from './components/BeaconOfHopeModal';
 import { FamilyStockpileModal } from './components/FamilyStockpileModal';
 import { CommunityMutualAidModal } from './components/CommunityMutualAidModal';
-import { Radio, ShieldCheck, AlertOctagon, BookOpen, Heart, FileText, Backpack, HeartHandshake } from 'lucide-react';
+import { ArticlesList } from './pages/ArticlesList';
+import { ArticleDetail } from './pages/ArticleDetail';
+import { Radio, ShieldCheck, AlertOctagon, BookOpen, Heart, FileText, Backpack, HeartHandshake, Library } from 'lucide-react';
 import { t, getLang, Language } from './utils/i18n';
 
 const App: React.FC = () => {
@@ -107,6 +109,15 @@ const App: React.FC = () => {
             <Heart className="w-3.5 h-3.5 fill-pink-500/20" />
             <span>{t('dockHope')}</span>
           </button>
+          <span className="text-gray-300 dark:text-gray-600">|</span>
+          <Link
+            to="/articles"
+            className="flex items-center gap-1 text-indigo-600 dark:text-indigo-400 font-bold hover:underline px-1.5 py-0.5 rounded hover:bg-indigo-50 dark:hover:bg-indigo-950/40"
+            title="防灾干货与国家民防储备文库"
+          >
+            <Library className="w-3.5 h-3.5" />
+            <span>{lang === 'en' ? 'Library' : '文库'}</span>
+          </Link>
         </div>
       </div>
 
@@ -185,6 +196,10 @@ const App: React.FC = () => {
 
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/articles" element={<ArticlesList />} />
+        <Route path="/articles/:slug" element={<ArticleDetail />} />
+        <Route path="/guides" element={<ArticlesList />} />
+        <Route path="/guides/:slug" element={<ArticleDetail />} />
         <Route path="/create" element={<CreateIncident />} />
         <Route path="/incident/:id" element={<IncidentDashboard />} />
         <Route path="/submit/:id" element={<PublicSubmit />} />
