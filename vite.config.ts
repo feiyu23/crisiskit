@@ -14,13 +14,13 @@ export default defineConfig(({ mode }) => {
         react(),
         VitePWA({
           registerType: 'autoUpdate',
-          includeAssets: ['icon.svg', 'robots.txt', 'offline.html'],
+          includeAssets: ['icon.svg', 'robots.txt', 'sitemap.xml', 'og-image.png', 'offline.html'],
           manifest: {
-            name: 'CrisisKit - 10-Second Crisis Management',
-            short_name: 'CrisisKit',
-            description: 'Ultra-fast crisis response for emergencies. Submit incidents, coordinate responses, and manage disasters in 10 seconds or less.',
+            name: 'Sparks Beacon · 星火应急信标',
+            short_name: 'SparksBeacon',
+            description: '纯公益全天候极境离线防灾求生站与备灾互助平台。支持完全离线运行：72h家庭备灾物资计算器、避难所余缺互助调剂板、地震火山防灾手册、零流量卫星呼救与声光信标。',
             theme_color: '#dc2626',
-            background_color: '#ffffff',
+            background_color: '#070a12',
             display: 'standalone',
             orientation: 'portrait',
             start_url: '/',
@@ -35,10 +35,17 @@ export default defineConfig(({ mode }) => {
             ],
             shortcuts: [
               {
-                name: 'Emergency Submit',
+                name: 'Emergency SOS',
                 short_name: 'SOS',
-                description: 'Quick emergency submission',
+                description: 'Quick emergency submission & satellite SMS',
                 url: '/#/submit',
+                icons: [{ src: 'icon.svg', sizes: '192x192' }]
+              },
+              {
+                name: 'Stockpile Calculator',
+                short_name: 'Stockpile',
+                description: 'Family disaster stockpile checklist',
+                url: '/#/',
                 icons: [{ src: 'icon.svg', sizes: '192x192' }]
               }
             ]
