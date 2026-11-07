@@ -1,13 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sparks Beacon · 星火应急信标 | 极境离线求生与灾后互助</title>
-    <meta name="description" content="纯公益极境离线求生信标。针对高山泥石流、断网断电、极度低温场景，支持零流量卫星短报文、声光救援信标、安置点离线寻人与心理急救。" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
+    <!-- Primary Title & Meta Description -->
+    <title>Sparks Beacon · 星火应急信标 | 全球人道离线求生与备灾互助 (Offline Survival & 72h Stockpile)</title>
+    <meta name="description" content="Sparks Beacon (星火应急信标) 是纯公益全球全天候离线防灾求生站与备灾互助平台。支持100%离线运行，专为地震、火山喷发、洪涝、风雪暴寒、泥石流与断网断电孤岛打造。内置72h/7天家庭备灾物资计算器、避难所余缺互助调剂板、摩尔斯SOS屏幕频闪与3.1kHz穿透哨、零流量短信卫星呼救与离线生死自救指南。" />
+    <meta name="keywords" content="Sparks Beacon, 星火应急信标, 家庭备灾计算器, 72小时应急储备, 避难所余缺互助, 地震自救指南, 离线求生, 泥石流逃生, 火山灰防护, 屏幕SOS频闪, 3.1kHz救生哨, 卫星短报文求救, 断网应急, PWA离线应用, disaster preparedness calculator, offline emergency beacon, survival guide, 72-hour stockpile, civil defence checklist" />
+    <meta name="author" content="Sparks Beacon Humanitarian Project" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://sos.sparkbeacon.org/" />
+
+    <!-- Favicon & PWA Icons -->
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="apple-touch-icon" href="/icon.svg" />
+    <meta name="theme-color" content="#dc2626" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="SparksBeacon" />
+
+    <!-- Open Graph / Facebook / WeChat / iMessage -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sos.sparkbeacon.org/" />
+    <meta property="og:title" content="Sparks Beacon · 星火应急信标 | 全球人道离线求生与备灾互助" />
+    <meta property="og:description" content="纯公益防灾求生站。支持100%完全离线运行：72h家庭备灾计算器、避难所余缺互助调剂板、声光SOS信标、零网络短报文卫星求救与地震泥石流极境自救手册。" />
+    <meta property="og:image" content="https://sos.sparkbeacon.org/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Sparks Beacon - Offline Disaster Survival and Preparedness Lifeline" />
+    <meta property="og:site_name" content="Sparks Beacon · 星火应急信标" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale:alternate" content="zh_TW" />
+
+    <!-- Twitter / X Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://sos.sparkbeacon.org/" />
+    <meta name="twitter:title" content="Sparks Beacon · 星火应急信标 | 全球人道离线求生与备灾互助" />
+    <meta name="twitter:description" content="纯公益防灾求生站。支持100%完全离线运行：72h家庭备灾计算器、避难所余缺互助调剂板、声光SOS信标与极境自救手册。" />
+    <meta name="twitter:image" content="https://sos.sparkbeacon.org/og-image.png" />
+    <meta name="twitter:image:alt" content="Sparks Beacon Global Humanitarian Lifeline" />
+
+    <!-- Schema.org JSON-LD Structured Data for Rich Snippets -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "@id": "https://sos.sparkbeacon.org/#webapp",
+          "name": "Sparks Beacon · 星火应急信标",
+          "alternateName": ["Sparks Beacon", "星火应急信标", "CrisisKit"],
+          "url": "https://sos.sparkbeacon.org/",
+          "applicationCategory": "UtilitiesApplication",
+          "operatingSystem": "All (Web, iOS, Android, PWA)",
+          "browserRequirements": "Requires HTML5 & LocalStorage support. Works 100% offline.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD",
+            "description": "Free public-welfare open source humanitarian lifeline"
+          },
+          "featureList": [
+            "72-Hour & 7-Day Family Disaster Stockpile Calculator",
+            "Community & Shelter Mutual Aid Barter Board",
+            "Screen Morse SOS Strobe Beacon & 3.1kHz Acoustic Whistle",
+            "Zero-Data Satellite & SMS Emergency Coordinate Dispatch",
+            "Multi-Hazard Offline Survival Guide (Earthquakes, Volcanic Ash, Floods, Blizzards)",
+            "Offline Shelter Safety Check-in and Reunification Roster"
+          ]
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://sos.sparkbeacon.org/#howto-stockpile",
+          "name": "如何科学制定72小时与7天家庭极境备灾物资储备",
+          "description": "依据北欧与德国国家民防标准，测算家庭饮用水、耐存免烹饪高能口粮、慢性病常备药与热源储备。",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "计算生命饮用水",
+              "text": "按每人每天3.5升（饮水2.5L+极简烹饪1L）+宠物每天1升测算，储备7天充足水源。"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "储备免烹饪高热量口粮",
+              "text": "每人每天约2100大卡，备齐罐头即食蛋白、高脂坚果、花生酱与长效碳水，并准备手动机械开罐器。"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "常备处方药与急救耗材",
+              "text": "慢性病（高血压、心脏病、哮喘、胰岛素）准备14~30天滚动余量，备齐口服补液盐、创伤绷带与止血带。"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "保暖与断电应急热源",
+              "text": "准备便携卡式炉与密封丁烷气罐、防失温铝箔毯、大容量满电充电宝与手摇多功能收音机。"
+            }
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
   <body class="bg-gray-50 text-gray-900 dark:bg-black dark:text-gray-100 antialiased min-h-screen">
+    <!-- Non-JavaScript Crawler / Screen Reader Accessible Semantic Content -->
+    <noscript>
+      <div style="max-width: 800px; margin: 40px auto; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1f2937;">
+        <h1 style="color: #dc2626; font-size: 28px; margin-bottom: 8px;">Sparks Beacon · 星火应急信标</h1>
+        <p style="font-size: 16px; color: #4b5563; margin-bottom: 24px;">
+          纯公益全球全天候离线防灾求生站。专为<strong>地震、火山喷发、洪涝、风雪暴寒、泥石流、断网断电孤岛与公共卫生紧急状态</strong>打造。支持完全离线与零流量运行。
+        </p>
+
+        <h2 style="font-size: 20px; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">核心防灾与自救互助功能：</h2>
+        <ul style="padding-left: 20px; margin-top: 12px;">
+          <li style="margin-bottom: 12px;">
+            <strong>🎒 72h / 7天 极境家庭备灾物资计算器</strong>：依据北欧（瑞典 MSB / 挪威 DSB）与德国民防局（BBK）权威标准，科学测算全家饮用水（3.5L/人/天）、免烹饪高能口粮、14天慢性病常备药、便携卡式炉与应急卫生储备。
+          </li>
+          <li style="margin-bottom: 12px;">
+            <strong>🤝 社区与避难所余缺互助调剂板</strong>：断网孤岛与临时安置点物物调剂。“我有余/可提供”（发电机充电、多余净水片、多余消炎药）与“我急需”（降压药、婴儿奶粉、保温毯），就地余缺互济。
+          </li>
+          <li style="margin-bottom: 12px;">
+            <strong>🚨 声光救援信标 (SOS)</strong>：夜间与浓雾穿透性屏幕摩尔斯 SOS 强光频闪，搭配国际搜救 3.1kHz 穿透性音频救生哨，引导直升机与搜救队准确定位。
+          </li>
+          <li style="margin-bottom: 12px;">
+            <strong>📡 零流量短信 / 卫星短报文一键呼救</strong>：自动提取设备高精度 GPS 经纬度、海拔与伤情，离线生成高密度短报文，直通亲友与应急搜救队。
+          </li>
+          <li style="margin-bottom: 12px;">
+            <strong>📖 极境多灾种自救避险手册</strong>：涵盖地震室内外避险、泥石流垂直两侧高地逃生、火山灰呼吸道与眼部防护、高寒湿冷隔绝地面防失温生死法则、野外泥水三步净化沸腾与避难所防交叉感染。
+          </li>
+          <li style="margin-bottom: 12px;">
+            <strong>📋 离线报平安与避难所寻亲名册</strong>：零网络环境下登记避难者姓名、同行人数与安置位置，支持受灾群众与搜救队伍离线快速比对寻亲。
+          </li>
+        </ul>
+
+        <p style="margin-top: 30px; font-size: 14px; color: #6b7280;">
+          官方访问网址：<a href="https://sos.sparkbeacon.org" style="color: #2563eb;">https://sos.sparkbeacon.org</a> · 纯公益免费服务 · 支持手机离线安装 PWA 桌面应用
+        </p>
+      </div>
+    </noscript>
+
     <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
-</body>
+    <script type="module" src="/index.tsx"></script>
+  </body>
 </html>
