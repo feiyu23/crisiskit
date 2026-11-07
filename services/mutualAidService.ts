@@ -1,8 +1,9 @@
 import { MutualAidItem, MutualAidType, MutualAidCategory } from '../types';
+import { getLang } from '../utils/i18n';
 
 const LOCAL_STORAGE_MUTUAL_AID_KEY = 'crisiskit_mutual_aid_items';
 
-const DEFAULT_SEED_ITEMS: MutualAidItem[] = [
+const DEFAULT_SEED_ITEMS_ZH: MutualAidItem[] = [
   {
     id: 'aid_sample_1',
     type: 'offer',
@@ -39,6 +40,43 @@ const DEFAULT_SEED_ITEMS: MutualAidItem[] = [
   }
 ];
 
+const DEFAULT_SEED_ITEMS_EN: MutualAidItem[] = [
+  {
+    id: 'aid_sample_1',
+    type: 'offer',
+    category: 'power',
+    title: 'Community Generator Charging Station (12:00-14:00)',
+    description: 'Free multi-port charging for phones and flashlights. 30 minutes max per person.',
+    contact: 'Alex (Tent B-07)',
+    location: 'Central Shelter Plaza',
+    status: 'active',
+    timestamp: Date.now() - 3600000 * 2,
+  },
+  {
+    id: 'aid_sample_2',
+    type: 'request',
+    category: 'medicine',
+    title: 'Urgent: Blood Pressure Medicine (Amlodipine / Nifedipine)',
+    description: 'Elderly relative BP spiked to 170 due to panic. Medication swept away. Need 2-3 pills, willing to barter rations!',
+    contact: 'Elena (Medical Tent)',
+    location: 'Sector A, Cabin 3',
+    isUrgent: true,
+    status: 'active',
+    timestamp: Date.now() - 3600000,
+  },
+  {
+    id: 'aid_sample_3',
+    type: 'offer',
+    category: 'water',
+    title: 'Water Purification Tablets (20 pcs to share)',
+    description: 'Purifies raw stream/muddy water. Families in need please bring clean water bottles.',
+    contact: 'Dr. Evans (Volunteer)',
+    location: 'Aid Distribution Desk',
+    status: 'active',
+    timestamp: Date.now() - 1800000,
+  }
+];
+
 export const mutualAidService = {
   getItems(): MutualAidItem[] {
     try {
@@ -50,9 +88,10 @@ export const mutualAidService = {
     } catch (e) {
       console.error('Failed to read mutual aid items from storage', e);
     }
-    // Return sample seed items on first run
-    localStorage.setItem(LOCAL_STORAGE_MUTUAL_AID_KEY, JSON.stringify(DEFAULT_SEED_ITEMS));
-    return DEFAULT_SEED_ITEMS;
+    // Return sample seed items on first run matching current language
+    const seeds = getLang() === 'en' ? DEFAULT_SEED_ITEMS_EN : DEFAULT_SEED_ITEMS_ZH;
+    localStorage.setItem(LOCAL_STORAGE_MUTUAL_AID_KEY, JSON.stringify(seeds));
+    return seeds;
   },
 
   addItem(item: Omit<MutualAidItem, 'id' | 'timestamp' | 'status'>): MutualAidItem {

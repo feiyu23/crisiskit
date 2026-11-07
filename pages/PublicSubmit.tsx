@@ -15,7 +15,9 @@ import { SafetyCheckinModal } from '../components/SafetyCheckinModal';
 import { EmergencyBeaconModal } from '../components/EmergencyBeaconModal';
 import { DisasterFieldGuideModal } from '../components/DisasterFieldGuideModal';
 import { BeaconOfHopeModal } from '../components/BeaconOfHopeModal';
-import { Radio, HeartHandshake, AlertOctagon, BookOpen, Heart } from 'lucide-react';
+import { FamilyStockpileModal } from '../components/FamilyStockpileModal';
+import { CommunityMutualAidModal } from '../components/CommunityMutualAidModal';
+import { Radio, HeartHandshake, AlertOctagon, BookOpen, Heart, Backpack } from 'lucide-react';
 
 export const PublicSubmit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -34,6 +36,8 @@ export const PublicSubmit: React.FC = () => {
   const [showBeaconModal, setShowBeaconModal] = useState(false);
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showHopeModal, setShowHopeModal] = useState(false);
+  const [showStockpileModal, setShowStockpileModal] = useState(false);
+  const [showMutualAidModal, setShowMutualAidModal] = useState(false);
 
   // SOS & Location State
   const [isLocating, setIsLocating] = useState(false);
@@ -356,8 +360,32 @@ export const PublicSubmit: React.FC = () => {
             >
               <BookOpen className="w-5 h-5 shrink-0 text-amber-600 dark:text-amber-400" />
               <div>
-                <div className="font-bold text-xs">泥石流自救手册</div>
-                <div className="text-[10px] text-amber-600/70 dark:text-amber-300/70">垂直逃生与高原防失温</div>
+                <div className="font-bold text-xs">极境避险手册</div>
+                <div className="text-[10px] text-amber-600/70 dark:text-amber-300/70">地震火山暴雪防失温</div>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowStockpileModal(true)}
+              className="flex items-center gap-2 p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 transition-all text-left"
+            >
+              <Backpack className="w-5 h-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+              <div>
+                <div className="font-bold text-xs">家庭备灾测算</div>
+                <div className="text-[10px] text-emerald-600/70 dark:text-emerald-300/70">72h/7天水粮医药配额</div>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowMutualAidModal(true)}
+              className="flex items-center gap-2 p-3 bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 rounded-xl text-teal-700 dark:text-teal-300 hover:bg-teal-100 transition-all text-left"
+            >
+              <HeartHandshake className="w-5 h-5 shrink-0 text-teal-600 dark:text-teal-400" />
+              <div>
+                <div className="font-bold text-xs">社区余缺互助</div>
+                <div className="text-[10px] text-teal-600/70 dark:text-teal-300/70">避难所离线物物调剂</div>
               </div>
             </button>
           </div>
@@ -611,6 +639,14 @@ export const PublicSubmit: React.FC = () => {
       <BeaconOfHopeModal
         isOpen={showHopeModal}
         onClose={() => setShowHopeModal(false)}
+      />
+      <FamilyStockpileModal
+        isOpen={showStockpileModal}
+        onClose={() => setShowStockpileModal(false)}
+      />
+      <CommunityMutualAidModal
+        isOpen={showMutualAidModal}
+        onClose={() => setShowMutualAidModal(false)}
       />
     </div>
   );
