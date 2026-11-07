@@ -268,64 +268,64 @@ export const FamilyStockpileModal: React.FC<FamilyStockpileModalProps> = ({ isOp
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
             {/* Adults */}
             <div className="bg-white dark:bg-gray-900 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col justify-between">
-              <span className="text-gray-500 text-[11px]">{isEn ? 'Adults' : '成人'}</span>
+              <span className="text-gray-500 dark:text-gray-400 text-[11px]">{isEn ? 'Adults' : '成人'}</span>
               <div className="flex items-center justify-between mt-1">
                 <button 
                   onClick={() => setAdults(Math.max(1, adults - 1))}
-                  className="w-6 h-6 rounded bg-gray-100 dark:bg-gray-800 font-bold"
+                  className="w-6 h-6 rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold hover:bg-gray-200 dark:hover:bg-gray-700"
                 >-</button>
                 <span className="font-bold text-sm text-gray-900 dark:text-white">{adults}</span>
                 <button 
                   onClick={() => setAdults(adults + 1)}
-                  className="w-6 h-6 rounded bg-gray-100 dark:bg-gray-800 font-bold"
+                  className="w-6 h-6 rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold hover:bg-gray-200 dark:hover:bg-gray-700"
                 >+</button>
               </div>
             </div>
 
             {/* Seniors */}
             <div className="bg-white dark:bg-gray-900 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col justify-between">
-              <span className="text-gray-500 text-[11px]">{isEn ? 'Seniors (65+)' : '老人 (慢性病)'}</span>
+              <span className="text-gray-500 dark:text-gray-400 text-[11px]">{isEn ? 'Seniors (65+)' : '老人 (慢性病)'}</span>
               <div className="flex items-center justify-between mt-1">
                 <button 
                   onClick={() => setSeniors(Math.max(0, seniors - 1))}
-                  className="w-6 h-6 rounded bg-gray-100 dark:bg-gray-800 font-bold"
+                  className="w-6 h-6 rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold hover:bg-gray-200 dark:hover:bg-gray-700"
                 >-</button>
                 <span className="font-bold text-sm text-gray-900 dark:text-white">{seniors}</span>
                 <button 
                   onClick={() => setSeniors(seniors + 1)}
-                  className="w-6 h-6 rounded bg-gray-100 dark:bg-gray-800 font-bold"
+                  className="w-6 h-6 rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold hover:bg-gray-200 dark:hover:bg-gray-700"
                 >+</button>
               </div>
             </div>
 
             {/* Children */}
             <div className="bg-white dark:bg-gray-900 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col justify-between">
-              <span className="text-gray-500 text-[11px]">{isEn ? 'Children/Babies' : '婴幼儿/儿童'}</span>
+              <span className="text-gray-500 dark:text-gray-400 text-[11px]">{isEn ? 'Children/Babies' : '婴幼儿/儿童'}</span>
               <div className="flex items-center justify-between mt-1">
                 <button 
                   onClick={() => setChildren(Math.max(0, children - 1))}
-                  className="w-6 h-6 rounded bg-gray-100 dark:bg-gray-800 font-bold"
+                  className="w-6 h-6 rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold hover:bg-gray-200 dark:hover:bg-gray-700"
                 >-</button>
                 <span className="font-bold text-sm text-gray-900 dark:text-white">{children}</span>
                 <button 
                   onClick={() => setChildren(children + 1)}
-                  className="w-6 h-6 rounded bg-gray-100 dark:bg-gray-800 font-bold"
+                  className="w-6 h-6 rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold hover:bg-gray-200 dark:hover:bg-gray-700"
                 >+</button>
               </div>
             </div>
 
             {/* Pets */}
             <div className="bg-white dark:bg-gray-900 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col justify-between">
-              <span className="text-gray-500 text-[11px]">{isEn ? 'Pets' : '伴侣宠物'}</span>
+              <span className="text-gray-500 dark:text-gray-400 text-[11px]">{isEn ? 'Pets' : '伴侣宠物'}</span>
               <div className="flex items-center justify-between mt-1">
                 <button 
                   onClick={() => setPets(Math.max(0, pets - 1))}
-                  className="w-6 h-6 rounded bg-gray-100 dark:bg-gray-800 font-bold"
+                  className="w-6 h-6 rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold hover:bg-gray-200 dark:hover:bg-gray-700"
                 >-</button>
                 <span className="font-bold text-sm text-gray-900 dark:text-white">{pets}</span>
                 <button 
                   onClick={() => setPets(pets + 1)}
-                  className="w-6 h-6 rounded bg-gray-100 dark:bg-gray-800 font-bold"
+                  className="w-6 h-6 rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold hover:bg-gray-200 dark:hover:bg-gray-700"
                 >+</button>
               </div>
             </div>
@@ -336,15 +336,15 @@ export const FamilyStockpileModal: React.FC<FamilyStockpileModalProps> = ({ isOp
               <div className="flex items-center justify-around mt-1">
                 <button 
                   onClick={() => setDays(3)} 
-                  className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${days === 3 ? 'bg-emerald-600 text-white' : 'text-gray-500'}`}
+                  className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${days === 3 ? 'bg-emerald-600 text-white' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
                 >3d</button>
                 <button 
                   onClick={() => setDays(7)} 
-                  className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${days === 7 ? 'bg-emerald-600 text-white' : 'text-gray-500'}`}
+                  className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${days === 7 ? 'bg-emerald-600 text-white' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
                 >7d</button>
                 <button 
                   onClick={() => setDays(10)} 
-                  className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${days === 10 ? 'bg-emerald-600 text-white' : 'text-gray-500'}`}
+                  className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${days === 10 ? 'bg-emerald-600 text-white' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
                 >10d</button>
               </div>
             </div>

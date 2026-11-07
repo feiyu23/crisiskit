@@ -150,7 +150,7 @@ export const Home: React.FC = () => {
     <div className="max-w-4xl mx-auto pt-16 sm:pt-20 pb-28 sm:pb-16 px-4 sm:px-6 lg:px-8">
       {/* Hero Header */}
       <div className="text-center mb-8 sm:mb-10">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-100 dark:bg-red-950/70 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs font-bold mb-3 shadow-sm">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-100 dark:bg-red-950/90 border border-red-300 dark:border-red-700 text-red-800 dark:text-red-200 text-xs font-bold mb-3 shadow-sm">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
@@ -166,16 +166,16 @@ export const Home: React.FC = () => {
         <h1 className="text-3xl sm:text-5xl font-black text-gray-900 dark:text-white tracking-tight mb-3">
           {t('beaconTitle')}
         </h1>
-        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-sm sm:text-base text-gray-700 dark:text-gray-200 max-w-2xl mx-auto leading-relaxed font-normal">
           {isEn ? (
             <>
-              Pure non-profit public lifeline for <strong>Earthquakes, Volcanic eruptions, Floods, Blizzards, Mudslides, Grid outages, and Epidemics</strong>.
+              Pure non-profit public lifeline for <strong className="text-gray-900 dark:text-white font-bold">Earthquakes, Volcanic eruptions, Floods, Blizzards, Mudslides, Grid outages, and Epidemics</strong>.
               <br className="hidden sm:inline" />
               <strong className="text-red-600 dark:text-red-400 font-semibold"> Fully functional offline & zero-data required</strong>. Stay calm and preserve warmth — hope is with you.
             </>
           ) : (
             <>
-              纯公益全天候防灾生命线。专为<strong>地震、火山喷发、洪涝、风雪极寒、泥石流、断网断电孤岛与公共卫生紧急状态</strong>打造。
+              纯公益全天候防灾生命线。专为<strong className="text-gray-900 dark:text-white font-bold">地震、火山喷发、洪涝、风雪极寒、泥石流、断网断电孤岛与公共卫生紧急状态</strong>打造。
               <br className="hidden sm:inline" />
               <strong className="text-red-600 dark:text-red-400 font-semibold">支持完全离线与零流量运行</strong>。请保持镇定、保存体温，微光虽小，星火为你守候。
             </>
@@ -190,7 +190,7 @@ export const Home: React.FC = () => {
             <ShieldAlert className="w-4 h-4" />
             {t('lifelineSectionTitle')}
           </h2>
-          <span className="text-[11px] text-gray-400 dark:text-gray-500 font-mono">
+          <span className="text-[11px] text-gray-500 dark:text-gray-300 font-mono">
             {t('lifelineSectionSubtitle')}
           </span>
         </div>
@@ -297,22 +297,22 @@ export const Home: React.FC = () => {
       {/* 🎒 Section 2: Preparedness, Community Mutual Aid, Mental First Aid & Survival Field Guide */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-10">
         {/* Module 1: Family Stockpile Calculator (NEW) */}
-        <div className="p-4 sm:p-5 rounded-2xl border border-emerald-200 dark:border-emerald-900/50 bg-gradient-to-br from-emerald-50/80 via-teal-50/30 to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 shadow-sm flex flex-col justify-between">
+        <div className="p-4 sm:p-5 rounded-2xl border border-emerald-300 dark:border-emerald-800/80 bg-gradient-to-br from-emerald-50/90 via-teal-50/40 to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 shadow-sm flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <div className="p-2 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 rounded-xl">
+                <div className="p-2 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-300 rounded-xl">
                   <Backpack className="w-5 h-5" />
                 </div>
                 <h3 className="font-extrabold text-sm sm:text-base text-gray-900 dark:text-white">
                   {isEn ? '72h & 7-Day Family Stockpile Calculator' : '🎒 72h / 7天 极境家庭备灾计算器'}
                 </h3>
               </div>
-              <span className="text-[10px] text-emerald-700 dark:text-emerald-300 font-bold bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] text-emerald-800 dark:text-emerald-200 font-bold bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
                 {isEn ? 'Civil Defence Standard' : '有备无患'}
               </span>
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+            <p className="text-xs text-gray-700 dark:text-gray-200 leading-relaxed mb-4 font-normal">
               {isEn 
                 ? 'Based on Nordic and German civil defence guidelines: calculate exact drinking water, non-perishable high-calorie food, 14-day chronic medicines, and emergency cooking heat for your family.'
                 : '依据北欧与德国国家民防指南：测算家庭饮用水（3.5L/人/天）、免烹饪高能口粮、14天慢性病常备药、卡式炉与应急排泄物储备，支持离线打勾清点。'}
@@ -327,22 +327,22 @@ export const Home: React.FC = () => {
         </div>
 
         {/* Module 2: Community Mutual Aid Board (NEW) */}
-        <div className="p-4 sm:p-5 rounded-2xl border border-teal-200 dark:border-teal-900/50 bg-gradient-to-br from-teal-50/80 via-cyan-50/30 to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 shadow-sm flex flex-col justify-between">
+        <div className="p-4 sm:p-5 rounded-2xl border border-teal-300 dark:border-teal-800/80 bg-gradient-to-br from-teal-50/90 via-cyan-50/40 to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 shadow-sm flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <div className="p-2 bg-teal-100 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 rounded-xl">
+                <div className="p-2 bg-teal-100 dark:bg-teal-950/80 text-teal-600 dark:text-teal-300 rounded-xl">
                   <HeartHandshake className="w-5 h-5" />
                 </div>
                 <h3 className="font-extrabold text-sm sm:text-base text-gray-900 dark:text-white">
                   {isEn ? 'Community Mutual Aid Board' : '🤝 社区与避难所余缺互助调剂板'}
                 </h3>
               </div>
-              <span className="text-[10px] text-teal-700 dark:text-teal-300 font-bold bg-teal-100 dark:bg-teal-950 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] text-teal-800 dark:text-teal-200 font-bold bg-teal-100 dark:bg-teal-950 px-2 py-0.5 rounded-full border border-teal-200 dark:border-teal-800">
                 {isEn ? 'Local Barter' : '守望相助'}
               </span>
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+            <p className="text-xs text-gray-700 dark:text-gray-200 leading-relaxed mb-4 font-normal">
               {isEn 
                 ? 'Isolated shelter mutual exchange: share generator charging hours, extra antibiotics, or water purification tablets. Request urgent insulin, baby formula, or blankets.'
                 : '断网孤岛与安置点互通有无：“我有余/可提供”（发电机充电、多余消炎药、井水）与“我急需”（降压药、婴儿配方奶粉、保温毯），就地余缺互济。'}
@@ -357,22 +357,22 @@ export const Home: React.FC = () => {
         </div>
 
         {/* Module 3: Beacon of Hope & Mental First Aid */}
-        <div className="p-4 sm:p-5 rounded-2xl border border-pink-200 dark:border-pink-900/50 bg-gradient-to-br from-pink-50/80 via-rose-50/40 to-amber-50/50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 shadow-sm flex flex-col justify-between">
+        <div className="p-4 sm:p-5 rounded-2xl border border-pink-300 dark:border-pink-800/80 bg-gradient-to-br from-pink-50/90 via-rose-50/40 to-amber-50/50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 shadow-sm flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <div className="p-2 bg-pink-100 dark:bg-pink-950/60 text-pink-600 dark:text-pink-400 rounded-xl">
+                <div className="p-2 bg-pink-100 dark:bg-pink-950/80 text-pink-600 dark:text-pink-300 rounded-xl">
                   <Heart className="w-5 h-5 fill-pink-500/20" />
                 </div>
                 <h3 className="font-extrabold text-sm sm:text-base text-gray-900 dark:text-white">
                   {t('mentalAidTitle')}
                 </h3>
               </div>
-              <span className="text-[10px] text-amber-700 dark:text-amber-300 font-serif bg-amber-100 dark:bg-amber-900/40 px-1.5 py-0.5 rounded">
+              <span className="text-[10px] text-amber-700 dark:text-amber-300 font-serif bg-amber-100 dark:bg-amber-900/60 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800">
                 བཀྲ་ཤིས་བདེ་ལེགས
               </span>
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+            <p className="text-xs text-gray-700 dark:text-gray-200 leading-relaxed mb-4 font-normal">
               {t('mentalAidDesc')}
             </p>
           </div>
@@ -385,22 +385,22 @@ export const Home: React.FC = () => {
         </div>
 
         {/* Module 4: Multi-Hazard Field Survival Guide */}
-        <div className="p-4 sm:p-5 rounded-2xl border border-amber-200 dark:border-amber-900/50 bg-gradient-to-br from-amber-50/80 via-yellow-50/30 to-orange-50/40 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 shadow-sm flex flex-col justify-between">
+        <div className="p-4 sm:p-5 rounded-2xl border border-amber-300 dark:border-amber-800/80 bg-gradient-to-br from-amber-50/90 via-yellow-50/30 to-orange-50/40 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 shadow-sm flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <div className="p-2 bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 rounded-xl">
+                <div className="p-2 bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-300 rounded-xl">
                   <BookOpen className="w-5 h-5" />
                 </div>
                 <h3 className="font-extrabold text-sm sm:text-base text-gray-900 dark:text-white">
                   {isEn ? 'Multi-Hazard Field Survival Guide' : '📖 极境多灾种自救避险手册'}
                 </h3>
               </div>
-              <span className="text-[10px] text-amber-700 dark:text-amber-300 font-bold bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] text-amber-800 dark:text-amber-200 font-bold bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800">
                 {isEn ? 'Earthquake · Volcano · Cold' : '离线生死指南'}
               </span>
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+            <p className="text-xs text-gray-700 dark:text-gray-200 leading-relaxed mb-4 font-normal">
               {isEn 
                 ? 'Actionable survival protocols: Earthquake (Drop, Cover, Hold On), Mudslides (perpendicular escape), Volcanic ash defense, Severe cold (hypothermia prevention), and Emergency water purification.'
                 : '地震室内外避震避险、泥石流垂直高地逃生、火山灰呼吸道与眼部防护、高寒湿冷隔绝地面防失温、野外泥水三步澄清煮沸与疫情防交叉感染。'}
@@ -417,16 +417,16 @@ export const Home: React.FC = () => {
 
       {/* ⚙️ Section 3: Responders, Volunteers & Disaster Coordination Workspace */}
       <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-800">
-        <details className="group rounded-2xl bg-white dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/80 overflow-hidden shadow-sm transition">
-          <summary className="flex items-center justify-between p-4 sm:p-5 cursor-pointer select-none hover:bg-gray-50 dark:hover:bg-gray-750 transition">
+        <details className="group rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm transition">
+          <summary className="flex items-center justify-between p-4 sm:p-5 cursor-pointer select-none hover:bg-gray-50 dark:hover:bg-gray-850 transition">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-xl">
-                <Mountain className="w-5 h-5" />
+              <div className="p-2 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-xl">
+                <Mountain className="w-5 h-5 text-gray-600 dark:text-gray-300" />
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
                   {t('responderWorkspace')}
-                  <span className="text-[10px] bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-bold px-2 py-0.5 rounded">
+                  <span className="text-[10px] bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold px-2 py-0.5 rounded border border-gray-200 dark:border-gray-700">
                     {t('responderWorkspaceTag')}
                   </span>
                 </h3>
