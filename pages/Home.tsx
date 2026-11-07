@@ -427,6 +427,37 @@ export const Home: React.FC = () => {
       </div>
       </div>
 
+      {/* 📚 Section: Survival & Preparedness Field Knowledge Base */}
+      <div className="mb-10 p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-indigo-50/90 via-purple-50/40 to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 border border-indigo-200 dark:border-indigo-900/60 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-start gap-3.5">
+          <div className="p-3 bg-indigo-600 text-white rounded-2xl shadow-md shrink-0">
+            <BookOpen className="w-6 h-6" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-extrabold text-base sm:text-lg text-gray-900 dark:text-white">
+                {isEn ? 'Sparks Beacon Survival & Stockpile Field Library' : '📚 极境防灾与国家民防储备文库'}
+              </h3>
+              <span className="text-[10px] bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-bold px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800">
+                {isEn ? '6 Deep Protocols' : '权威干货 · 离线可读'}
+              </span>
+            </div>
+            <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed max-w-xl">
+              {isEn
+                ? 'Deep-dive tactical protocols: 72h family stockpile calculations, phone beacons in total grid collapse, earthquake rubble tapping, volcanic ash eye safety, and ground heat loss laws.'
+                : '深度实战避险：72h家庭储备标准拆解、断电断网孤岛手机信标、地震废墟敲击求生、火山灰护眼与防压塌、湿冷防失温地面隔绝铁律。'}
+            </p>
+          </div>
+        </div>
+        <Link
+          to="/articles"
+          className="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 group"
+        >
+          <span>{isEn ? 'Browse Survival Library' : '进入防灾文库查阅'}</span>
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+        </Link>
+      </div>
+
       {/* ⚙️ Section 3: Responders, Volunteers & Disaster Coordination Workspace */}
       <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-800">
         <details className="group rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm transition">
