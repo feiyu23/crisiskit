@@ -295,7 +295,18 @@ export const Home: React.FC = () => {
       </div>
 
       {/* 🎒 Section 2: Preparedness, Community Mutual Aid, Mental First Aid & Survival Field Guide */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-10">
+      <div className="mb-10">
+        <div className="flex items-center justify-between mb-3 px-1">
+          <h2 className="text-xs font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+            <Backpack className="w-4 h-4" />
+            {isEn ? 'CIVIL DEFENCE STOCKPILE & COMMUNITY MUTUAL AID' : '国家民防标准家庭备灾 · 社区与避难所余缺互助'}
+          </h2>
+          <span className="text-[11px] text-gray-500 dark:text-gray-400 font-mono">
+            {isEn ? 'Nordic / German Standards · 100% Offline' : '北欧/德国标准测算 · 就地余缺调剂'}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         {/* Module 1: Family Stockpile Calculator (NEW) */}
         <div className="p-4 sm:p-5 rounded-2xl border border-emerald-300 dark:border-emerald-800/80 bg-gradient-to-br from-emerald-50/90 via-teal-50/40 to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 shadow-sm flex flex-col justify-between">
           <div>
@@ -413,6 +424,7 @@ export const Home: React.FC = () => {
             {isEn ? 'View Multi-Hazard Survival Guide' : '查看多灾种避险与自救指南'}
           </button>
         </div>
+      </div>
       </div>
 
       {/* ⚙️ Section 3: Responders, Volunteers & Disaster Coordination Workspace */}
